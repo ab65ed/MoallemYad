@@ -24,13 +24,8 @@ export default function Navigation() {
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo/Title */}
           <div className="flex items-center">
-            <Link href="/" data-testid="logo-link">
-              <h1 className="text-2xl font-bold text-memorial-blue hover:text-memorial-gold transition-colors duration-200">
-                سایت یادبود استاد محترم
-              </h1>
-            </Link>
+            {/* Logo/Title removed */}
           </div>
           
           {/* Desktop Navigation */}
