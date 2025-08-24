@@ -71,7 +71,7 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
-        vazir: ["Vazirmatn", "sans-serif"],
+        yekan: ["YekanBakh", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
