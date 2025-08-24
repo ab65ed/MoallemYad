@@ -3,23 +3,25 @@ export default function Home() {
     <div className="min-h-screen" style={{
       background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.05) 25%, #aab1b5 100%)'
     }}>
-      {/* Hero Section */}
-      <section className="h-[70vh] flex">
+      {/* Hero Section - Optimized for all devices */}
+      <section className="h-[80vh] min-h-[400px] max-h-[600px] flex">
         {/* تصویر سمت راست */}
-        <div className="w-1/2 h-full flex items-center justify-center">
+        <div className="w-1/2 h-full flex items-stretch justify-center">
           <img 
             src="/hero/right.png" 
             alt="Hero Right" 
-            className="w-full h-auto object-contain"
+            className="w-full h-full object-cover"
+            data-testid="hero-image-right"
           />
         </div>
         
         {/* تصویر سمت چپ */}
-        <div className="w-1/2 h-full flex items-center justify-center">
+        <div className="w-1/2 h-full flex items-stretch justify-center">
           <img 
             src="/hero/left 2.png" 
             alt="Hero Left" 
-            className="w-full h-auto object-contain"
+            className="w-full h-full object-cover"
+            data-testid="hero-image-left"
           />
         </div>
       </section>
