@@ -1,0 +1,47 @@
+export default function Mirror() {
+  return (
+    <main className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-memorial-blue mb-4" data-testid="page-title">
+            در آیینه دیگران
+          </h1>
+          <div className="w-24 h-1 bg-memorial-gold rounded-full mx-auto mb-8"></div>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 min-h-96">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="bg-memorial-cream p-6 rounded-lg" data-testid="testimonial-1">
+                <h3 className="text-lg font-bold text-memorial-blue mb-3">نظر شاگرد اول</h3>
+                <div className="text-memorial-text">
+                  {/* محتوای نظرات */}
+                </div>
+              </div>
+              <div className="bg-memorial-cream p-6 rounded-lg" data-testid="testimonial-2">
+                <h3 className="text-lg font-bold text-memorial-blue mb-3">نظر همکار دوم</h3>
+                <div className="text-memorial-text">
+                  {/* محتوای نظرات */}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-memorial-cream p-6 rounded-lg" data-testid="testimonial-3">
+                <h3 className="text-lg font-bold text-memorial-blue mb-3">نظر دانشجوی سوم</h3>
+                <div className="text-memorial-text">
+                  {/* محتوای نظرات */}
+                </div>
+              </div>
+              <div className="bg-memorial-cream p-6 rounded-lg" data-testid="testimonial-4">
+                <h3 className="text-lg font-bold text-memorial-blue mb-3">نظر همکار چهارم</h3>
+                <div className="text-memorial-text">
+                  {/* محتوای نظرات */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
