@@ -8,12 +8,12 @@ export default function Footer() {
       style={{ backgroundColor: '#00a693' }}
       data-testid="footer"
     >
-      {/* Image 2 - Left side - 45% width - 100% height */}
-      <div className="w-[45%] flex items-center justify-start">
+      {/* Image 2 - Left side - 33.33% width - Extended height */}
+      <div className="w-[33.33%] flex items-end justify-start relative z-20">
         <img
           src={image2}
           alt=""
-          className="h-full w-auto object-cover"
+          className="h-[150%] w-auto object-cover"
           data-testid="footer-image-2"
         />
       </div>
