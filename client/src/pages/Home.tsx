@@ -60,16 +60,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Content Section with gradient background */}
-      <div
-        className="min-h-screen px-4 sm:px-6 lg:px-8"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.05) 25%, #aab1b5 100%)",
-        }}
-      >
-        {/* Additional content can be added here */}
-      </div>
     </div>
   );
 }
