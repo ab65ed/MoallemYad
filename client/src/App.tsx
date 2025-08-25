@@ -20,18 +20,20 @@ function Router() {
   return (
     <div className="min-h-screen bg-memorial-cream">
       <Navigation />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/blackboard" component={Blackboard} />
-        <Route path="/arena" component={Arena} />
-        <Route path="/canvas" component={Canvas} />
-        <Route path="/guide" component={Guide} />
-        <Route path="/cafe" component={Cafe} />
-        <Route path="/mirror" component={Mirror} />
-        <Route path="/final" component={Final} />
-        <Route path="/gallery" component={Gallery} />
-        <Route component={NotFound} />
-      </Switch>
+      <main className="w-full">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/blackboard" component={Blackboard} />
+          <Route path="/arena" component={Arena} />
+          <Route path="/canvas" component={Canvas} />
+          <Route path="/guide" component={Guide} />
+          <Route path="/cafe" component={Cafe} />
+          <Route path="/mirror" component={Mirror} />
+          <Route path="/final" component={Final} />
+          <Route path="/gallery" component={Gallery} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
       <Footer />
     </div>
   );
