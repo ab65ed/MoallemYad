@@ -21,11 +21,18 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+    <header className="shadow-sm border-b border-gray-100 sticky top-0 z-50" style={{ backgroundColor: '#00a693' }}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-2">
           <div className="flex items-center">
             {/* Logo/Title removed */}
+          </div>
+
+          {/* Mobile Title - Only visible on small devices */}
+          <div className="md:hidden flex-1 text-center">
+            <h1 className="text-white text-sm font-medium px-2">
+              یادبود مجازی همیشه معلم، مسعود محمدی
+            </h1>
           </div>
           
           {/* Desktop Navigation */}
@@ -39,8 +46,8 @@ export default function Navigation() {
                 <span
                   className={`px-3 py-2 font-medium transition-colors duration-200 ${
                     location === item.href
-                      ? 'text-memorial-blue font-bold'
-                      : 'text-memorial-text hover:text-memorial-blue'
+                      ? 'text-white font-bold'
+                      : 'text-white/90 hover:text-white'
                   }`}
                 >
                   {item.label}
@@ -56,7 +63,7 @@ export default function Navigation() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-memorial-text hover:text-memorial-blue"
+                  className="text-white hover:text-white/80"
                   data-testid="mobile-menu-button"
                 >
                   <Menu className="w-6 h-6" />
@@ -75,8 +82,8 @@ export default function Navigation() {
                       <span
                         className={`block px-3 py-2 rounded-md font-medium transition-colors duration-200 ${
                           location === item.href
-                            ? 'text-memorial-blue bg-memorial-cream font-bold'
-                            : 'text-memorial-text hover:text-memorial-blue hover:bg-gray-50'
+                            ? 'text-gray-900 bg-white/20 font-bold'
+                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
                         }`}
                       >
                         {item.label}
