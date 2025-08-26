@@ -12,19 +12,9 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+import { navigationItems } from "@/config/navigation";
 
-const navigationItems = [
-  { name: 'خانه', link: '/', key: 'home' },
-  { name: 'تخته سیاه', link: '/blackboard', key: 'blackboard' },
-  { name: 'گوی و میدان', link: '/arena', key: 'arena' },
-  { name: 'بوم رنگ خیال', link: '/canvas', key: 'canvas' },
-  { name: 'دانای راه بلد', link: '/guide', key: 'guide' },
-  { name: 'کافه نادری', link: '/cafe', key: 'cafe' },
-  { name: 'در آیینه دیگران', link: '/mirror', key: 'mirror' },
-  { name: 'سکانس آخر', link: '/final', key: 'final' },
-  { name: 'گالری', link: '/gallery', key: 'gallery' },
-  { name: 'داشبورد مدیریت', link: '/admin', key: 'admin' },
-];
+// items are provided from shared config
 
 // Custom NavItems component with wouter integration
 function CustomNavItems() {

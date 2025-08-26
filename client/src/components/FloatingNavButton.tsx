@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Menu, X, Play, Pause } from 'lucide-react';
+import { navigationItems } from '@/config/navigation';
+import { Link } from 'wouter';
 
 export default function FloatingNavButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  // حذف بی‌صدا کردن بر اساس درخواست
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.3);
   const [showMusicHint, setShowMusicHint] = useState(true);
@@ -192,21 +195,7 @@ export default function FloatingNavButton() {
     }
   };
 
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    setShowMusicHint(false); // مخفی کردن راهنما
-
-    if (isMuted || audio.muted) {
-      audio.muted = false;
-      audio.volume = volume;
-      setIsMuted(false);
-    } else {
-      audio.muted = true;
-      setIsMuted(true);
-    }
-  };
+  // کنترل mute حذف شد
 
   return (
     <div ref={containerRef} style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 9999 }}>
@@ -261,16 +250,16 @@ export default function FloatingNavButton() {
               gap: '8px',
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
+              padding: '6px 14px 6px 12px',
+              borderRadius: '20px',
               border: '1px solid rgba(0, 0, 0, 0.1)',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: '500',
               color: '#374151',
-              minWidth: 'fit-content',
+              minWidth: 'unset',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={(e) => {
@@ -283,8 +272,8 @@ export default function FloatingNavButton() {
             }}
           >
             <div style={{
-              width: '28px',
-              height: '28px',
+              width: '24px',
+              height: '24px',
               background: 'linear-gradient(135deg, #8b5cf6, #a855f7)',
               borderRadius: '50%',
               display: 'flex',
@@ -310,312 +299,49 @@ export default function FloatingNavButton() {
             </div>
             <span>{isPlaying ? 'توقف موسیقی' : 'پخش موسیقی'}</span>
           </button>
-
-          {/* سکانس آخر */}
-          <button
-            onClick={handleFinalClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>سکانس آخر</span>
-          </button>
-
-          {/* آینه دیگران */}
-          <button
-            onClick={handleMirrorClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>آینه دیگران</span>
-          </button>
-
-          {/* دانای راه بلد */}
-          <button
-            onClick={handleGuideClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>دانای راه بلد</span>
-          </button>
-
-          {/* کافه نادری */}
-          <button
-            onClick={handleCafeClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>کافه نادری</span>
-          </button>
-
-          {/* بوم رنگ خیال */}
-          <button
-            onClick={handleCanvasClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>بوم رنگ خیال</span>
-          </button>
-
-          {/* گوی و میدان */}
-          <button
-            onClick={handleArenaClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>گوی و میدان</span>
-          </button>
-
-          {/* تخته سیاه */}
-          <button
-            onClick={handleBlackboardClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>تخته سیاه</span>
-          </button>
-
-          {/* گالری رسانه */}
-          <button
-            onClick={handleGalleryClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>گالری رسانه</span>
-          </button>
-
-          {/* خانه */}
-          <button
-            onClick={handleHomeClick}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px 8px 12px',
-              borderRadius: '25px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#374151',
-              minWidth: 'fit-content',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-            }}
-          >
-            <SVGIcon size={28} />
-            <span>خانه</span>
-          </button>
+          {/* Mirror navbar items dynamically */}
+          {navigationItems
+            .filter((item) => item.key !== 'admin')
+            .map((item) => (
+              <Link key={item.key} href={item.link} onClick={closeMenu}>
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '6px 14px 6px 12px',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    minWidth: 'unset',
+                    whiteSpace: 'nowrap',
+                    backgroundImage: 'url(/icons/navbar.svg)',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'calc(100% - 8px) center',
+                    backgroundSize: '16px 16px'
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLSpanElement;
+                    el.style.transform = 'scale(1.05)';
+                    el.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLSpanElement;
+                    el.style.transform = 'scale(1)';
+                    el.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                  }}
+                >
+                  {item.name}
+                </span>
+              </Link>
+            ))}
         </div>
       )}
 
