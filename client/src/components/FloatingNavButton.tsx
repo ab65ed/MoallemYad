@@ -239,7 +239,8 @@ export default function FloatingNavButton() {
           gap: '8px',
           zIndex: 9999,
           maxHeight: '70vh',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          overflowX: 'hidden'
         }}>
           {/* Music Control Button */}
           <button
@@ -247,33 +248,32 @@ export default function FloatingNavButton() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              justifyContent: 'center',
+              gap: '10px',
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(8px)',
-              padding: '6px 14px 6px 12px',
-              borderRadius: '20px',
+              padding: '8px 16px 8px 14px',
+              borderRadius: '22px',
               border: '1px solid rgba(0, 0, 0, 0.1)',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              fontSize: '12px',
+              fontSize: '13px',
               fontWeight: '500',
               color: '#374151',
               minWidth: 'unset',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
               e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
               e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
             }}
           >
             <div style={{
-              width: '24px',
-              height: '24px',
+              width: '26px',
+              height: '26px',
               background: 'linear-gradient(135deg, #8b5cf6, #a855f7)',
               borderRadius: '50%',
               display: 'flex',
@@ -283,7 +283,7 @@ export default function FloatingNavButton() {
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
               position: 'relative'
             }}>
-              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+              {isPlaying ? <Pause size={18} /> : <Play size={18} />}
               {isPlaying && (
                 <div style={{
                   position: 'absolute',
@@ -308,37 +308,33 @@ export default function FloatingNavButton() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    justifyContent: 'center',
+                    gap: '10px',
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(8px)',
-                    padding: '6px 14px 6px 12px',
-                    borderRadius: '20px',
+                    padding: '8px 16px 8px 14px',
+                    borderRadius: '22px',
                     border: '1px solid rgba(0, 0, 0, 0.1)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    fontSize: '12px',
+                    transition: 'all 0.2s ease',
+                    fontSize: '13px',
                     fontWeight: '500',
                     color: '#374151',
                     minWidth: 'unset',
-                    whiteSpace: 'nowrap',
-                    backgroundImage: 'url(/icons/navbar.svg)',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'calc(100% - 8px) center',
-                    backgroundSize: '16px 16px'
+                    whiteSpace: 'nowrap'
                   }}
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLSpanElement;
-                    el.style.transform = 'scale(1.05)';
                     el.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLSpanElement;
-                    el.style.transform = 'scale(1)';
                     el.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
                   }}
                 >
-                  {item.name}
+                  <span>{item.name}</span>
+                  <img src="/icons/navbar.svg" alt="icon" style={{ width: '18px', height: '18px', opacity: 0.8 }} />
                 </span>
               </Link>
             ))}
@@ -363,7 +359,9 @@ export default function FloatingNavButton() {
           transition: 'all 0.3s ease',
           position: 'relative',
           zIndex: 10000,
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
         }}
         onMouseEnter={(e) => {
           if (!isOpen) {
