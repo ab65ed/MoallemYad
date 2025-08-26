@@ -306,13 +306,13 @@ export default function FloatingNavButton() {
               <Link key={item.key} href={item.link} onClick={closeMenu}>
                 <span
                   style={{
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '10px',
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(8px)',
-                    padding: '8px 16px 8px 14px',
+                    padding: '8px 40px 8px 14px',
                     borderRadius: '22px',
                     border: '1px solid rgba(0, 0, 0, 0.1)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -333,8 +333,20 @@ export default function FloatingNavButton() {
                     el.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
                   }}
                 >
-                  <span>{item.name}</span>
-                  <img src="/icons/navbar.svg" alt="icon" style={{ width: '18px', height: '18px', opacity: 0.8 }} />
+                  <span style={{ pointerEvents: 'none' }}>{item.name}</span>
+                  <img
+                    src="/icons/navbar.svg"
+                    alt="icon"
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      width: '18px',
+                      height: '18px',
+                      opacity: 0.85,
+                      objectFit: 'contain',
+                      pointerEvents: 'none'
+                    }}
+                  />
                 </span>
               </Link>
             ))}
