@@ -23,6 +23,7 @@ const navigationItems = [
   { name: 'در آیینه دیگران', link: '/mirror', key: 'mirror' },
   { name: 'سکانس آخر', link: '/final', key: 'final' },
   { name: 'گالری', link: '/gallery', key: 'gallery' },
+  { name: 'داشبورد مدیریت', link: '/admin', key: 'admin' },
 ];
 
 // Custom NavItems component with wouter integration

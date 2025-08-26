@@ -1,181 +1,37 @@
 import { useState } from 'react';
-import { X, ZoomIn, Filter, Grid, List, Camera, Heart, Calendar } from 'lucide-react';
-
-interface GalleryImage {
-  src: string;
-  title: string;
-  category: 'teaching' | 'personal' | 'sports' | 'students' | 'family';
-  year?: string;
-  description?: string;
-}
-
-const galleryImages: GalleryImage[] = [
-  {
-    src: '/gallery/1000577624_1756036569847.jpg',
-    title: 'عکس شناسنامه جوانی',
-    category: 'personal',
-    year: '۱۳۵۰',
-    description: 'تصویری از دوران جوانی استاد مسعود محمدی'
-  },
-  {
-    src: '/gallery/1000577625_1756036569848.jpg',
-    title: 'با دانش‌آموزان در مدرسه',
-    category: 'students',
-    year: '۱۳۶۰',
-    description: 'لحظات شیرین تدریس در کنار شاگردان عزیز'
-  },
-  {
-    src: '/gallery/1000577626_1756036569848.jpg',
-    title: 'همراه شاگردان در طبیعت',
-    category: 'students',
-    year: '۱۳۶۵',
-    description: 'کلاس درس در فضای باز و طبیعت زیبا'
-  },
-  {
-    src: '/gallery/1000577623_1756036569848.jpg',
-    title: 'پرتره شخصی',
-    category: 'personal',
-    year: '۱۳۷۰',
-    description: 'تصویری از شخصیت مهربان و دوست‌داشتنی استاد'
-  },
-  {
-    src: '/gallery/1000577617_1756036593155.jpg',
-    title: 'کلاس درس در هوای آزاد',
-    category: 'teaching',
-    year: '۱۳۶۲',
-    description: 'روش نوآورانه تدریس در محیط طبیعی'
-  },
-  {
-    src: '/gallery/1000577618_1756036593156.jpg',
-    title: 'تدریس در طبیعت',
-    category: 'teaching',
-    year: '۱۳۶۳',
-    description: 'آموزش جغرافیا در دل طبیعت'
-  },
-  {
-    src: '/gallery/1000577619_1756036593156.jpg',
-    title: 'با دانش‌آموزان در باغ',
-    category: 'students',
-    year: '۱۳۶۴',
-    description: 'لحظات آموزشی در فضای سبز و دلنشین'
-  },
-  {
-    src: '/gallery/1000577620_1756036593156.jpg',
-    title: 'نمایش مدرسه',
-    category: 'teaching',
-    year: '۱۳۶۶',
-    description: 'فعالیت‌های هنری و تربیتی مدرسه'
-  },
-  {
-    src: '/gallery/1000577622_1756036593157.jpg',
-    title: 'دوستان و همکاران',
-    category: 'personal',
-    year: '۱۳۶۸',
-    description: 'در کنار همکاران و دوستان صمیمی'
-  },
-  {
-    src: '/gallery/1000577614_1756036640776.jpg',
-    title: 'تیم فوتبال مدرسه',
-    category: 'sports',
-    year: '۱۳۶۷',
-    description: 'مربیگری تیم فوتبال دانش‌آموزان'
-  },
-  {
-    src: '/gallery/1000577615_1756036640777.jpg',
-    title: 'جام قهرمانی',
-    category: 'sports',
-    year: '۱۳۶۹',
-    description: 'لحظه کسب جام قهرمانی با شاگردان'
-  },
-  {
-    src: '/gallery/1000577616_1756036640777.jpg',
-    title: 'مسابقات ورزشی',
-    category: 'sports',
-    year: '۱۳۷۱',
-    description: 'حضور در مسابقات ورزشی مدارس'
-  },
-  {
-    src: '/gallery/1000577612_1756036640777.jpg',
-    title: 'همراه همکاران ورزشی',
-    category: 'sports',
-    year: '۱۳۷۲',
-    description: 'با سایر مربیان و معلمان ورزش'
-  },
-  {
-    src: '/gallery/1000577613_1756036640778.jpg',
-    title: 'اردوی تربیتی',
-    category: 'students',
-    year: '۱۳۷۳',
-    description: 'سفر آموزشی و تربیتی با دانش‌آموزان'
-  },
-  {
-    src: '/gallery/1000577585_1756036684258.jpg',
-    title: 'لحظات شاد',
-    category: 'personal',
-    year: '۱۳۷۴',
-    description: 'خوشی و شادی در کنار عزیزان'
-  },
-  {
-    src: '/gallery/1000577595_1756036684258.jpg',
-    title: 'عکس یادگاری',
-    category: 'family',
-    year: '۱۳۷۵',
-    description: 'یادگاری خانوادگی در روزهای خوش'
-  },
-  {
-    src: '/gallery/1000577599_1756036684258.jpg',
-    title: 'روزهای دانشجویی',
-    category: 'personal',
-    year: '۱۳۵۲',
-    description: 'خاطرات دوران تحصیل در دانشسرا'
-  },
-  {
-    src: '/gallery/1000577600_1756036684259.jpg',
-    title: 'همراه دوستان',
-    category: 'personal',
-    year: '۱۳۷۶',
-    description: 'در جمع دوستان و یاران صمیمی'
-  },
-  {
-    src: '/gallery/1000577610_1756036684259.jpg',
-    title: 'با اساتید دیگر',
-    category: 'teaching',
-    year: '۱۳۷۷',
-    description: 'در کنار همکاران و اساتید محترم'
-  },
-  {
-    src: '/gallery/1000577611_1756036684259.jpg',
-    title: 'در صحنه تئاتر',
-    category: 'teaching',
-    year: '۱۳۷۸',
-    description: 'فعالیت‌های هنری و تئاتر مدرسه'
-  },
-];
-
-const categories = {
-  all: { name: 'همه', icon: Grid },
-  teaching: { name: 'تدریس', icon: Camera },
-  students: { name: 'شاگردان', icon: Heart },
-  personal: { name: 'شخصی', icon: Calendar },
-  sports: { name: 'ورزش', icon: Filter },
-  family: { name: 'خانوادگی', icon: List }
-};
+import { X, ZoomIn, Filter, Grid, List, Camera, Heart, Calendar, Palette, Map, Video, Play, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useGalleryItems } from '@/hooks/useApi';
+import type { GalleryItem } from '@shared/schema';
 
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [selectedMediaType, setSelectedMediaType] = useState<string>('all');
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'masonry'>('grid');
 
-  const filteredImages = selectedCategory === 'all' 
-    ? galleryImages 
-    : galleryImages.filter(img => img.category === selectedCategory);
+  // API hook
+  const { data: galleryItems = [], isLoading, error } = useGalleryItems();
 
-  const openLightbox = (image: GalleryImage) => {
-    setSelectedImage(image);
+  // فیلتر کردن آیتم‌ها بر اساس دسته و نوع رسانه
+  const filteredItems = galleryItems.filter(item => {
+    const categoryMatch = selectedCategory === 'all' || item.category === selectedCategory;
+    const typeMatch = selectedMediaType === 'all' || item.type === selectedMediaType;
+    return categoryMatch && typeMatch;
+  });
+
+  const openModal = (item: GalleryItem) => {
+    setSelectedItem(item);
   };
 
-  const closeLightbox = () => {
-    setSelectedImage(null);
+  const closeModal = () => {
+    setSelectedItem(null);
+  };
+
+  // آمار محتوا
+  const stats = {
+    total: galleryItems.length,
+    images: galleryItems.filter(item => item.type === 'image').length,
+    videos: galleryItems.filter(item => item.type === 'video').length
   };
 
   return (
@@ -186,170 +42,356 @@ export default function Gallery() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-block p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50">
             <div className="flex items-center justify-center mb-4">
-              <Camera className="w-10 h-10 text-[#00a693] ml-3" />
+              <div className="flex items-center gap-2 ml-3">
+                <Camera className="w-8 h-8 text-[#00a693]" />
+                <Video className="w-8 h-8 text-[#eeaa22]" />
+              </div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-800 font-serif" data-testid="page-title">
-                گالری تصاویر
+                گالری رسانه
               </h1>
             </div>
             <div className="w-24 h-1 bg-gradient-to-r from-[#00a693] to-[#eeaa22] rounded-full mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              مجموعه‌ای از تصاویر و خاطرات زیبا از زندگی استاد مسعود محمدی
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
+              مجموعه‌ای از تصاویر و ویدیوهای زیبا از زندگی استاد مسعود محمدی
             </p>
+            
+            {/* آمار محتوا */}
+            <div className="flex justify-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <ImageIcon className="w-4 h-4" />
+                <span>{stats.images} تصویر</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Video className="w-4 h-4" />
+                <span>{stats.videos} ویدیو</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Grid className="w-4 h-4" />
+                <span>{stats.total} مجموع</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
-        {/* Filter and View Controls */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-6 mb-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-            
-            {/* Category Filters */}
-            <div className="flex flex-wrap justify-center gap-3">
-              {Object.entries(categories).map(([key, category]) => {
-                const IconComponent = category.icon;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedCategory(key)}
-                    className={`flex items-center px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                      selectedCategory === key
-                        ? 'bg-gradient-to-r from-[#00a693] to-[#eeaa22] text-white shadow-lg scale-105'
-                        : 'bg-[#dfdfdf] text-gray-700 hover:bg-[#aab1b5] hover:text-white hover:scale-105'
-                    }`}
-                  >
-                    <IconComponent className="w-4 h-4 ml-2" />
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md transition-all duration-200 ${
-                  viewMode === 'grid' 
-                    ? 'bg-[#00a693] text-white shadow-md' 
-                    : 'text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Grid className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('masonry')}
-                className={`p-2 rounded-md transition-all duration-200 ${
-                  viewMode === 'masonry' 
-                    ? 'bg-[#00a693] text-white shadow-md' 
-                    : 'text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <List className="w-5 h-5" />
-              </button>
-            </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-[#00a693] ml-3" />
+            <span className="text-gray-600">در حال بارگذاری گالری...</span>
           </div>
+        )}
 
-          {/* Results Count */}
-          <div className="mt-4 text-center text-gray-600">
-            <span className="bg-[#00a693]/10 px-3 py-1 rounded-full text-sm">
-              {filteredImages.length} تصویر یافت شد
-            </span>
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-700">خطا در بارگذاری گالری</p>
           </div>
-        </div>
+        )}
 
-        {/* Gallery Grid */}
-        <div className={`grid gap-6 ${
-          viewMode === 'grid' 
-            ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-        }`}>
-          {filteredImages.map((image, index) => (
-            <div
-              key={index}
-              className={`group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer hover:scale-105 ${
-                viewMode === 'masonry' && index % 3 === 1 ? 'md:row-span-2' : ''
-              }`}
-              onClick={() => openLightbox(image)}
-              data-testid={`gallery-item-${index + 1}`}
-            >
-              <div className="relative overflow-hidden">
-                <img
-                  src={image.src}
-                  alt={image.title}
-                  className={`w-full object-cover transition-transform duration-500 group-hover:scale-110 ${
-                    viewMode === 'grid' ? 'h-64' : 'h-48 md:h-80'
-                  }`}
-                  loading="lazy"
-                />
+        {/* Gallery Content */}
+        {!isLoading && !error && (
+          <>
+            {/* Filter and View Controls */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-6 mb-8">
+              <div className="flex flex-col gap-6">
                 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-white font-bold text-lg mb-1">{image.title}</h3>
-                    {image.year && (
-                      <p className="text-white/80 text-sm mb-2">{image.year}</p>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <span className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs">
-                        {categories[image.category as keyof typeof categories]?.name}
-                      </span>
-                      <ZoomIn className="w-5 h-5 text-white" />
-                    </div>
+                {/* نوع رسانه */}
+                <div className="text-center">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">نوع محتوا</h3>
+                  <div className="flex justify-center gap-2">
+                    {[
+                      { key: 'all', name: 'همه', icon: Grid },
+                      { key: 'image', name: 'تصاویر', icon: ImageIcon },
+                      { key: 'video', name: 'ویدیوها', icon: Video }
+                    ].map(({ key, name, icon: Icon }) => (
+                      <button
+                        key={key}
+                        onClick={() => setSelectedMediaType(key)}
+                        className={`flex items-center px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                          selectedMediaType === key
+                            ? 'bg-gradient-to-r from-[#00a693] to-[#eeaa22] text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 ml-2" />
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* دسته‌بندی */}
+                <div className="text-center">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">دسته‌بندی</h3>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {[
+                      { key: 'all', name: 'همه', icon: Grid },
+                      { key: 'teaching', name: 'تدریس', icon: Camera },
+                      { key: 'personal', name: 'شخصی', icon: Calendar },
+                      { key: 'sports', name: 'ورزش', icon: Filter },
+                      { key: 'family', name: 'خانوادگی', icon: List },
+                      { key: 'artistic', name: 'فعالیت‌های هنری', icon: Palette },
+                      { key: 'travel', name: 'سفر و ایرانگردی', icon: Map }
+                    ].map(({ key, name, icon: Icon }) => (
+                      <button
+                        key={key}
+                        onClick={() => setSelectedCategory(key)}
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm ${
+                          selectedCategory === key
+                            ? 'bg-[#00a693] text-white shadow-md scale-105'
+                            : 'bg-[#dfdfdf] text-gray-700 hover:bg-[#aab1b5] hover:text-white hover:scale-105'
+                        }`}
+                      >
+                        <Icon className="w-3 h-3 ml-1" />
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* View Mode و نتایج */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                  {/* View Mode Toggle */}
+                  <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 rounded-md transition-all duration-200 ${
+                        viewMode === 'grid' 
+                          ? 'bg-[#00a693] text-white shadow-md' 
+                          : 'text-gray-600 hover:bg-gray-200'
+                      }`}
+                      title="نمایش شبکه‌ای"
+                    >
+                      <Grid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('masonry')}
+                      className={`p-2 rounded-md transition-all duration-200 ${
+                        viewMode === 'masonry' 
+                          ? 'bg-[#00a693] text-white shadow-md' 
+                          : 'text-gray-600 hover:bg-gray-200'
+                      }`}
+                      title="نمایش آجری"
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Results Count */}
+                  <div className="text-center text-gray-600">
+                    <span className="bg-[#00a693]/10 px-3 py-1 rounded-full text-sm">
+                      {filteredItems.length} مورد یافت شد
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Empty State */}
-        {filteredImages.length === 0 && (
-          <div className="text-center py-16">
-            <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-600 mb-2">
-              تصویری در این دسته یافت نشد
-            </h3>
-            <p className="text-gray-500">
-              لطفاً دسته دیگری را انتخاب کنید
-            </p>
-          </div>
+            {/* Gallery Grid */}
+            {filteredItems.length > 0 ? (
+              <div className={`grid gap-6 ${
+                viewMode === 'grid' 
+                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}>
+                {filteredItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer hover:scale-105 ${
+                      viewMode === 'masonry' && index % 3 === 1 ? 'md:row-span-2' : ''
+                    }`}
+                    onClick={() => openModal(item)}
+                    data-testid={`gallery-item-${index + 1}`}
+                  >
+                    <div className="relative overflow-hidden">
+                      {item.type === 'image' ? (
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          className={`w-full object-cover transition-transform duration-500 group-hover:scale-110 ${
+                            viewMode === 'grid' ? 'h-64' : 'h-48 md:h-80'
+                          }`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="relative">
+                          {item.poster ? (
+                            <img
+                              src={item.poster}
+                              alt={item.title}
+                              className={`w-full object-cover transition-transform duration-500 group-hover:scale-110 ${
+                                viewMode === 'grid' ? 'h-64' : 'h-48 md:h-80'
+                              }`}
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className={`w-full bg-gradient-to-br from-[#00a693]/20 to-[#eeaa22]/20 flex items-center justify-center ${
+                              viewMode === 'grid' ? 'h-64' : 'h-48 md:h-80'
+                            }`}>
+                              <Video className="w-16 h-16 text-[#00a693]/60" />
+                            </div>
+                          )}
+                          
+                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                            <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                              <Play className="w-6 h-6 text-[#00a693] mr-1" />
+                            </div>
+                          </div>
+
+                          {item.duration && (
+                            <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                              {item.duration}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="absolute top-2 left-2">
+                        <div className={`p-1.5 rounded-full ${
+                          item.type === 'image' 
+                            ? 'bg-[#00a693]/90 text-white' 
+                            : 'bg-[#eeaa22]/90 text-white'
+                        }`}>
+                          {item.type === 'image' ? (
+                            <ImageIcon className="w-3 h-3" />
+                          ) : (
+                            <Video className="w-3 h-3" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <h3 className="text-white font-bold text-lg mb-1">{item.title}</h3>
+                          {item.year && (
+                            <p className="text-white/80 text-sm mb-2">{item.year}</p>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs">
+                              {{
+                                teaching: 'تدریس',
+                                personal: 'شخصی',
+                                sports: 'ورزش',
+                                family: 'خانوادگی',
+                                artistic: 'فعالیت‌های هنری',
+                                travel: 'سفر و ایرانگردی'
+                              }[item.category]}
+                            </span>
+                            {item.type === 'image' ? (
+                              <ZoomIn className="w-5 h-5 text-white" />
+                            ) : (
+                              <Play className="w-5 h-5 text-white" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="flex justify-center gap-2 mb-4">
+                  <Camera className="w-12 h-12 text-gray-400" />
+                  <Video className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-600 mb-2">
+                  {selectedMediaType === 'all' && selectedCategory === 'all' 
+                    ? 'محتوایی یافت نشد'
+                    : 'محتوایی در این فیلتر یافت نشد'
+                  }
+                </h3>
+                <p className="text-gray-500">
+                  {selectedMediaType === 'all' && selectedCategory === 'all'
+                    ? 'محتوای جدید به زودی اضافه خواهد شد'
+                    : 'لطفاً فیلتر دیگری را انتخاب کنید'
+                  }
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Lightbox Modal */}
-      {selectedImage && (
+      {/* Media Modal */}
+      {selectedItem && (
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <div className="relative max-w-4xl max-h-full">
-            {/* Close Button */}
+          <div className="relative max-w-4xl max-h-full w-full">
             <button
-              onClick={closeLightbox}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200"
+              onClick={closeModal}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200 z-10"
             >
               <X className="w-8 h-8" />
             </button>
             
-            {/* Image */}
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.title}
-              className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
-            />
-            
-            {/* Image Info */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 rounded-b-lg">
-              <h3 className="text-white text-2xl font-bold mb-2">{selectedImage.title}</h3>
-              {selectedImage.year && (
-                <p className="text-white/80 text-lg mb-2">{selectedImage.year}</p>
+            <div className="bg-black rounded-lg overflow-hidden shadow-2xl">
+              {selectedItem.type === 'image' ? (
+                <img
+                  src={selectedItem.src}
+                  alt={selectedItem.title}
+                  className="max-w-full max-h-[70vh] object-contain mx-auto"
+                />
+              ) : (
+                <video
+                  src={selectedItem.src}
+                  poster={selectedItem.poster || undefined}
+                  controls
+                  className="max-w-full max-h-[70vh] object-contain mx-auto"
+                  autoPlay
+                >
+                  مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                </video>
               )}
-              {selectedImage.description && (
-                <p className="text-white/90 leading-relaxed">{selectedImage.description}</p>
-              )}
-              <div className="mt-3">
-                <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
-                  {categories[selectedImage.category as keyof typeof categories]?.name}
-                </span>
+              
+              <div className="bg-gradient-to-t from-black/80 to-transparent p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="text-white text-2xl font-bold mb-2">{selectedItem.title}</h3>
+                    <div className="flex items-center gap-4 mb-2">
+                      {selectedItem.year && (
+                        <span className="text-white/80 text-lg">{selectedItem.year}</span>
+                      )}
+                      {selectedItem.duration && (
+                        <span className="text-white/80 text-lg">مدت زمان: {selectedItem.duration}</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className={`p-2 rounded-full ${
+                    selectedItem.type === 'image' 
+                      ? 'bg-[#00a693]/90 text-white' 
+                      : 'bg-[#eeaa22]/90 text-white'
+                  }`}>
+                    {selectedItem.type === 'image' ? (
+                      <ImageIcon className="w-5 h-5" />
+                    ) : (
+                      <Video className="w-5 h-5" />
+                    )}
+                  </div>
+                </div>
+                
+                {selectedItem.description && (
+                  <p className="text-white/90 leading-relaxed mb-3">{selectedItem.description}</p>
+                )}
+                
+                <div className="flex items-center justify-between">
+                  <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    {{
+                      teaching: 'تدریس',
+                      personal: 'شخصی',
+                      sports: 'ورزش',
+                      family: 'خانوادگی',
+                      artistic: 'فعالیت‌های هنری',
+                      travel: 'سفر و ایرانگردی'
+                    }[selectedItem.category]}
+                  </span>
+                  <span className="text-white/60 text-sm">
+                    {selectedItem.type === 'image' ? 'تصویر' : 'ویدیو'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
