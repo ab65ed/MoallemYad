@@ -340,8 +340,8 @@ export default function FloatingNavButton() {
                     style={{
                       position: 'absolute',
                       right: '12px',
-                      width: '18px',
-                      height: '18px',
+                      width: '20px',
+                      height: '20px',
                       opacity: 0.85,
                       objectFit: 'contain',
                       pointerEvents: 'none'
