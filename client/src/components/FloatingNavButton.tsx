@@ -238,7 +238,7 @@ export default function FloatingNavButton() {
           flexDirection: 'column',
           gap: '8px',
           zIndex: 9999,
-          maxHeight: '70vh',
+          maxHeight: '82vh',
           overflowY: 'auto',
           overflowX: 'hidden'
         }}>
