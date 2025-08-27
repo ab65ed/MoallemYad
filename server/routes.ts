@@ -48,6 +48,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const token = generateToken(user);
+      if (!token) {
+        return res.status(500).json({ error: "خطا در تولید token" });
+      }
       recordLoginAttempt(ip, true);
 
       res.json({
@@ -132,7 +135,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(item);
     } catch (error) {
       if (error instanceof Error && error.name === 'ZodError') {
-        return res.status(400).json({ error: "Invalid data", details: error });
+        const errorDetails = JSON.parse(error.message);
+        return res.status(400).json({ 
+          error: "داده‌های ارسالی نامعتبر است", 
+          details: errorDetails.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')
+        });
       }
       res.status(500).json({ error: "Failed to create gallery item" });
     }
@@ -327,7 +334,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const status = (req.query.status as string) || 'pending';
       if (!['pending','approved','banned'].includes(status)) {
-        return res.status(400).json({ error: "Invalid status" });
+        return res.status(400).json({ 
+          error: "وضعیت نامعتبر است. وضعیت‌های معتبر: pending, approved, banned" 
+        });
       }
       const list = await storage.getCommentsByStatus(status as any);
       res.json(list);
@@ -480,10 +489,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "رمز عبور جدید باید حداقل 8 کاراکتر باشد" });
       }
 
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
-      if (!passwordRegex.test(newPassword)) {
+      const hasLower = /[a-z]/.test(newPassword);
+      const hasUpper = /[A-Z]/.test(newPassword);
+      const hasDigit = /\d/.test(newPassword);
+      const hasSpecial = /[@$!%*?&]/.test(newPassword);
+      const isLongEnough = newPassword.length >= 8;
+      
+      if (!hasLower || !hasUpper || !hasDigit || !hasSpecial || !isLongEnough) {
+        const issues = [];
+        if (!isLongEnough) issues.push("حداقل ۸ کاراکتر");
+        if (!hasLower) issues.push("حروف کوچک انگلیسی");
+        if (!hasUpper) issues.push("حروف بزرگ انگلیسی");
+        if (!hasDigit) issues.push("عدد");
+        if (!hasSpecial) issues.push("کاراکتر خاص (@$!%*?&)");
         return res.status(400).json({ 
-          error: "رمز عبور باید شامل حروف کوچک، بزرگ، عدد و کاراکتر خاص باشد" 
+          error: `رمز عبور باید شامل: ${issues.join("، ")} باشد` 
         });
       }
 

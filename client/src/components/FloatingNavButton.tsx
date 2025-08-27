@@ -115,52 +115,6 @@ export default function FloatingNavButton() {
     setIsOpen(false);
   };
 
-  const handleHomeClick = () => {
-    console.log('Home clicked');
-    window.location.href = '/';
-    closeMenu();
-  };
-
-  const handleGalleryClick = () => {
-    console.log('Gallery clicked');
-    window.location.href = '/gallery';
-    closeMenu();
-  };
-
-  const handleBlackboardClick = () => {
-    window.location.href = '/blackboard';
-    closeMenu();
-  };
-
-  const handleArenaClick = () => {
-    window.location.href = '/arena';
-    closeMenu();
-  };
-
-  const handleCanvasClick = () => {
-    window.location.href = '/canvas';
-    closeMenu();
-  };
-
-  const handleGuideClick = () => {
-    window.location.href = '/guide';
-    closeMenu();
-  };
-
-  const handleCafeClick = () => {
-    window.location.href = '/cafe';
-    closeMenu();
-  };
-
-  const handleMirrorClick = () => {
-    window.location.href = '/mirror';
-    closeMenu();
-  };
-
-  const handleFinalClick = () => {
-    window.location.href = '/final';
-    closeMenu();
-  };
 
   // کامپوننت آیکون SVG
   const SVGIcon = ({ size = 16 }: { size?: number }) => (

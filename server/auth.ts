@@ -1,4 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // JWT Secret - در production باید از environment variable استفاده شود
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production-2024';
@@ -65,15 +67,8 @@ export async function validateUser(username: string, password: string) {
     return null;
   }
 
-  // Simple password validation for demo purposes
-  const validPasswords: Record<string, string> = {
-    'abed': 'Abed@2024!',
-    'mojtaba': 'Mojtaba@2024!',
-    'ehsan': 'Ehsan@2024!',
-    'mohammadi': 'Mohammadi@2024!'
-  };
-
-  const isValidPassword = validPasswords[username] === password;
+  // استفاده از bcrypt برای مقایسه رمز عبور
+  const isValidPassword = await bcrypt.compare(password, user.password);
   
   if (!isValidPassword) {
     return null;
@@ -91,34 +86,45 @@ export async function validateUser(username: string, password: string) {
   };
 }
 
-// تولید JWT token (simplified)
+// تولید JWT token
 export function generateToken(user: any) {
-  return `mock-token-${user.username}-${Date.now()}`;
+  try {
+    const payload = {
+      id: user.id,
+      username: user.username,
+      role: user.role
+    };
+    
+    return jwt.sign(payload, JWT_SECRET, { 
+      expiresIn: JWT_EXPIRES_IN,
+      issuer: 'moallemyad-app'
+    });
+  } catch (error) {
+    console.error('Error generating token:', error);
+    return null;
+  }
 }
 
-// بررسی اعتبار JWT token (simplified)
+// بررسی اعتبار JWT token
 export function verifyToken(token: string) {
-  if (!token || !token.startsWith('mock-token-')) {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    
+    // بررسی وجود کاربر
+    const user = ADMIN_USERS[decoded.username as keyof typeof ADMIN_USERS];
+    if (!user || !user.isActive) {
+      return null;
+    }
+    
+    return {
+      id: decoded.id,
+      username: decoded.username,
+      role: decoded.role
+    };
+  } catch (error) {
+    console.error('Token verification failed:', error);
     return null;
   }
-  
-  const parts = token.split('-');
-  if (parts.length < 3) {
-    return null;
-  }
-  
-  const username = parts[2];
-  const user = ADMIN_USERS[username as keyof typeof ADMIN_USERS];
-  
-  if (!user) {
-    return null;
-  }
-  
-  return {
-    id: user.id,
-    username: user.username,
-    role: user.role
-  };
 }
 
 // Middleware برای احراز هویت
