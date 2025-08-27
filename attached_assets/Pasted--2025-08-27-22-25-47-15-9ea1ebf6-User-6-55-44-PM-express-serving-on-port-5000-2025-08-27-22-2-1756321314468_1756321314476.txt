@@ -1,0 +1,101 @@
+
+2025-08-27 22:25:47.15
+9ea1ebf6
+User
+6:55:44 PM [express] serving on port 5000
+2025-08-27 22:26:09.81
+9ea1ebf6
+User
+6:56:09 PM [vite] Pre-transform error: Failed to load url /src/main.tsx?v=PX7bbUiYe68OcE9VBd74f (resolved id: /src/main.tsx?v=PX7bbUiYe68OcE9VBd74f). Does the file exist?
+2025-08-27 22:26:10.75
+9ea1ebf6
+System
+command finished with error [npm run start]: exit status 1
+2025-08-27 22:26:11.78
+9ea1ebf6
+User
+> rest-express@1.0.0 start
+2025-08-27 22:26:11.78
+9ea1ebf6
+User
+> set NODE_ENV=production && node dist/index.js
+2025-08-27 22:26:32.47
+9ea1ebf6
+User
+6:56:32 PM [express] serving on port 5000
+2025-08-27 22:26:33.12
+9ea1ebf6
+User
+6:56:33 PM [vite] Pre-transform error: Failed to load url /src/main.tsx?v=9_nEnLiCpC4aZviRjJBhM (resolved id: /src/main.tsx?v=9_nEnLiCpC4aZviRjJBhM). Does the file exist?
+2025-08-27 22:26:33.16
+9ea1ebf6
+System
+command finished with error [npm run start]: exit status 1
+2025-08-27 22:27:00.55
+9ea1ebf6
+User
+> rest-express@1.0.0 start
+2025-08-27 22:27:00.55
+9ea1ebf6
+User
+> set NODE_ENV=production && node dist/index.js
+2025-08-27 22:27:38.00
+9ea1ebf6
+User
+6:57:37 PM [express] serving on port 5000
+2025-08-27 22:29:54.49
+9ea1ebf6
+User
+6:59:54 PM [vite] Pre-transform error: Failed to load url /src/main.tsx?v=9ge4sfYuxlU3gTp6PsKIb (resolved id: /src/main.tsx?v=9ge4sfYuxlU3gTp6PsKIb). Does the file exist?
+2025-08-27 22:29:54.53
+9ea1ebf6
+System
+command finished with error [npm run start]: exit status 1
+2025-08-27 22:29:54.86
+9ea1ebf6
+User
+> rest-express@1.0.0 start
+2025-08-27 22:29:54.86
+9ea1ebf6
+User
+> set NODE_ENV=production && node dist/index.js
+2025-08-27 22:30:05.55
+9ea1ebf6
+User
+7:00:01 PM [express] serving on port 5000
+2025-08-27 22:30:18.46
+9ea1ebf6
+User
+7:00:18 PM [vite] Pre-transform error: Failed to load url /src/main.tsx?v=XNoFVm6Rqoef5XPndTj-A (resolved id: /src/main.tsx?v=XNoFVm6Rqoef5XPndTj-A). Does the file exist?
+2025-08-27 22:30:19.41
+9ea1ebf6
+System
+command finished with error [npm run start]: exit status 1
+2025-08-27 22:30:24.16
+9ea1ebf6
+User
+> rest-express@1.0.0 start
+2025-08-27 22:30:24.16
+9ea1ebf6
+User
+> set NODE_ENV=production && node dist/index.js
+2025-08-27 22:30:30.31
+9ea1ebf6
+User
+7:00:30 PM [express] serving on port 5000
+2025-08-27 22:30:31.17
+9ea1ebf6
+User
+7:00:31 PM [vite] Pre-transform error: Failed to load url /src/main.tsx?v=AFKjT9hJb_Mf8M-7pDY89 (resolved id: /src/main.tsx?v=AFKjT9hJb_Mf8M-7pDY89). Does the file exist?
+2025-08-27 22:30:31.34
+9ea1ebf6
+System
+command finished with error [npm run start]: exit status 1
+2025-08-27 22:30:59.75
+9ea1ebf6
+User
+> rest-express@1.0.0 start
+2025-08-27 22:30:59.75
+9ea1ebf6
+User
+> set NODE_ENV=production && node dist/index.js
