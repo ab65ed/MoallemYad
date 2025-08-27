@@ -1,6 +1,5 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
-import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
@@ -23,46 +22,7 @@ import {
   ADMIN_USERS
 } from "./auth";
 
-// تنظیمات multer برای آپلود فایل
-const uploadStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(process.cwd(), 'client', 'public', 'gallery');
-    
-    // اطمینان از وجود پوشه
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // تولید نام یکتا برای فایل
-    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, uniqueSuffix + ext);
-  }
-});
-
-// فیلتر فایل‌ها (فقط تصاویر و ویدیوها)
-const fileFilter = (req: any, file: any, cb: any) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|avi|mov|wmv|flv|webm/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb(new Error('فقط فایل‌های تصویری و ویدیویی مجاز هستند!'));
-  }
-};
-
-const upload = multer({
-  storage: uploadStorage,
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB
-  },
-  fileFilter: fileFilter
-});
+// File upload functionality disabled - removed multer dependency
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -133,31 +93,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
-  // File Upload Route (Protected)
-  app.post("/api/upload", authenticateToken, requireAdmin, upload.single('file'), (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "هیچ فایلی آپلود نشده است" });
-      }
-
-      // مسیر نسبی فایل برای استفاده در frontend
-      const relativePath = `/gallery/${req.file.filename}`;
-      
-      // تشخیص نوع فایل
-      const isVideo = /\.(mp4|avi|mov|wmv|flv|webm)$/i.test(req.file.filename);
-      
-      res.json({
-        success: true,
-        filePath: relativePath,
-        fileName: req.file.filename,
-        originalName: req.file.originalname,
-        size: req.file.size,
-        type: isVideo ? 'video' : 'image'
-      });
-    } catch (error) {
-      console.error('Upload error:', error);
-      res.status(500).json({ error: "خطا در آپلود فایل" });
-    }
+  // File Upload Route (Disabled - multer dependency removed)
+  app.post("/api/upload", authenticateToken, requireAdmin, (req, res) => {
+    res.status(501).json({ error: "File upload functionality is disabled" });
   });
   
   // Gallery API Routes
