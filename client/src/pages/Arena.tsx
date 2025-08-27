@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 export default function Arena() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -27,10 +29,11 @@ export default function Arena() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animated-grid-bg rounded-2xl">
         
         {/* Early Football Days */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
+        <Reveal>
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3">
               <h2 className="text-3xl font-bold text-gray-800 text-right mb-6 border-b-2 border-green-400 pb-4">
@@ -41,9 +44,9 @@ export default function Arena() {
               </p>
             </div>
             <div className="lg:w-1/3">
-              <div className="relative group">
+              <div className="relative group arena-image-wrapper">
                 <img 
-                  src="/tabs/arena/1.png" 
+                  src="/tabs/arena/1.jpg" 
                   alt="آغاز فوتبال"
                   className="w-full rounded-xl shadow-lg group-hover:shadow-2xl transition-all duration-300"
                 />
@@ -52,9 +55,11 @@ export default function Arena() {
             </div>
           </div>
         </div>
+        </Reveal>
 
         {/* Professional Training */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
+        <Reveal delayMs={80}>
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3">
               <h2 className="text-3xl font-bold text-gray-800 text-right mb-6 border-b-2 border-green-400 pb-4">
@@ -70,9 +75,9 @@ export default function Arena() {
               </div>
             </div>
             <div className="lg:w-1/3">
-              <div className="relative group">
+              <div className="relative group arena-image-wrapper">
                 <img 
-                  src="/tabs/arena/2.png" 
+                  src="/tabs/arena/2.jpg" 
                   alt="آموزش حرفه‌ای"
                   className="w-full rounded-xl shadow-lg group-hover:shadow-2xl transition-all duration-300"
                 />
@@ -81,9 +86,11 @@ export default function Arena() {
             </div>
           </div>
         </div>
+        </Reveal>
 
         {/* Team Management */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
+        <Reveal delayMs={120}>
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3">
               <h2 className="text-3xl font-bold text-gray-800 text-right mb-6 border-b-2 border-green-400 pb-4">
@@ -99,9 +106,9 @@ export default function Arena() {
               </div>
             </div>
             <div className="lg:w-1/3">
-              <div className="relative group">
+              <div className="relative group arena-image-wrapper">
                 <img 
-                  src="/tabs/arena/3.png" 
+                  src="/tabs/arena/3.jpg" 
                   alt="قهرمانی تیم"
                   className="w-full rounded-xl shadow-lg group-hover:shadow-2xl transition-all duration-300"
                 />
@@ -110,9 +117,11 @@ export default function Arena() {
             </div>
           </div>
         </div>
+        </Reveal>
 
         {/* Coaching Philosophy */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
+        <Reveal delayMs={160}>
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3">
               <h2 className="text-3xl font-bold text-gray-800 text-right mb-6 border-b-2 border-green-400 pb-4">
@@ -128,9 +137,9 @@ export default function Arena() {
               </div>
             </div>
             <div className="lg:w-1/3">
-              <div className="relative group">
+              <div className="relative group arena-image-wrapper">
                 <img 
-                  src="/tabs/arena/4.png" 
+                  src="/tabs/arena/4.jpg" 
                   alt="فلسفه مربی‌گری"
                   className="w-full rounded-xl shadow-lg group-hover:shadow-2xl transition-all duration-300"
                 />
@@ -139,9 +148,11 @@ export default function Arena() {
             </div>
           </div>
         </div>
+        </Reveal>
 
         {/* Social Harmony and Fair Play */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
+        <Reveal delayMs={200}>
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
           <h2 className="text-3xl font-bold text-gray-800 text-right mb-8 border-b-2 border-green-400 pb-4">
             هم‌گرایی و Fair Play
           </h2>
@@ -165,6 +176,7 @@ export default function Arena() {
             </p>
           </div>
         </div>
+        </Reveal>
 
         {/* Sports Management and Legacy */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-8 md:p-12 mb-12">
@@ -191,9 +203,9 @@ export default function Arena() {
               </div>
             </div>
             <div className="lg:w-1/3">
-              <div className="relative group">
+              <div className="relative group arena-image-wrapper">
                 <img 
-                  src="/tabs/arena/5.png" 
+                  src="/tabs/arena/5.jpg" 
                   alt="میراث ورزشی"
                   className="w-full rounded-xl shadow-lg group-hover:shadow-2xl transition-all duration-300"
                 />
@@ -204,6 +216,7 @@ export default function Arena() {
         </div>
 
         {/* Stadium Atmosphere and Commentary Legacy */}
+        <Reveal delayMs={240}>
         <div className="bg-gradient-to-br from-slate-800 to-gray-900 rounded-2xl shadow-2xl p-8 md:p-12 text-white">
           <h2 className="text-3xl font-bold text-center mb-8 text-green-400">
             فضای استادیوم و میراث تفسیری
@@ -222,6 +235,7 @@ export default function Arena() {
             </div>
           </div>
         </div>
+        </Reveal>
 
       </div>
     </main>
