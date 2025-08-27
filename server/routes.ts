@@ -27,7 +27,10 @@ import {
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Serve static files from gallery directory
-  app.use('/gallery', express.static(path.join(process.cwd(), 'client', 'public', 'gallery')));
+  const galleryPath = process.env.NODE_ENV === 'production' 
+    ? path.join(process.cwd(), 'dist', 'public', 'gallery')
+    : path.join(process.cwd(), 'client', 'public', 'gallery');
+  app.use('/gallery', express.static(galleryPath));
   
   // Authentication Routes
   app.post("/api/auth/login", rateLimitLogin, async (req, res) => {
