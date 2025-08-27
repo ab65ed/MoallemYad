@@ -110,8 +110,7 @@ export default function Mirror() {
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            نگاهی به خاطرات و تجربیات کسانی که زندگی‌شان را لمس کرده‌ایم
-          </p>
+یادداشت‌های دوستداران مسعود محمدی در اینجا آورده شده است؛ شما نیز می‌توانید روایت خود را به این آینه بیفزایید.          </p>
         </div>
 
         {/* Category Filter */}

@@ -19,8 +19,9 @@ export default function Final() {
               سکانس آخر
             </h1>
             <div className="w-32 h-1 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              «در سکوت شب، ستاره‌ای فرو ریخت؛ اما نورش در آسمان خاطره‌ها جاودان ماند»
+
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              آیین پاسداشتِ معلمی و مردم‌داری او که در چهره‌ها و هم‌قدمی مردم پیدا است.
             </p>
           </div>
         </div>
@@ -60,6 +61,22 @@ export default function Final() {
             <p className="text-lg leading-relaxed text-gray-700 text-right">
               روز دوشنبه، بیست و نهم بهمن، شهر سوق لباس عزا پوشید. از صبح زود، مردم از هر کوی و برزن، از هر طبقه و قشر، به سوی خانه استاد روان شدند. خیابان‌ها پر از چهره‌هایی شد که اندوه در آن‌ها با احترام آمیخته بود.
             </p>
+            
+            {/* ویدیوی اول مراسم تشییع */}
+            <div className="relative w-full overflow-hidden rounded-xl shadow-lg border border-gray-200 mb-8">
+              <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                <video 
+                  className="absolute top-0 left-0 w-full h-full object-cover" 
+                  controls
+                >
+                  <source src="/tabs/final/1.mp4" type="video/mp4" />
+                  مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                </video>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <p className="text-white text-sm md:text-base text-right">لحظات تشییع پیکر استاد مسعود محمدی - بخش اول</p>
+              </div>
+            </div>
             
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-6">
@@ -110,6 +127,22 @@ export default function Final() {
               <p className="text-lg leading-relaxed text-gray-800 text-right">
                 خیابان‌های سوق که روزی شاهد دویدن‌های او در تمرینات صبحگاهی بود، حالا شاهد آهسته‌ترین قدم‌های زندگی‌اش شده بود. مردم در دو طرف مسیر ایستاده بودند؛ برخی گل پراکنده می‌کردند، برخی دعا می‌خواندند، و برخی فقط در سکوت، احترام می‌گذاشتند.
               </p>
+            </div>
+            
+            {/* ویدیوی دوم مراسم تشییع */}
+            <div className="relative w-full overflow-hidden rounded-xl shadow-lg border border-gray-200 mb-8">
+              <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                <video 
+                  className="absolute top-0 left-0 w-full h-full object-cover" 
+                  controls
+                >
+                  <source src="/tabs/final/2.mp4" type="video/mp4" />
+                  مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                </video>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <p className="text-white text-sm md:text-base text-right">لحظات تشییع پیکر استاد مسعود محمدی - بخش دوم</p>
+              </div>
             </div>
             
             <div className="flex flex-col md:flex-row gap-8 items-center">
