@@ -35,6 +35,18 @@ export const testimonials = pgTable("testimonials", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Comments on testimonials
+export const comments = pgTable("comments", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  testimonialId: integer("testimonial_id").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  content: text("content").notNull(),
+  status: text("status").notNull(), // 'pending' | 'approved' | 'banned'
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // User schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -63,6 +75,19 @@ export const updateTestimonialSchema = insertTestimonialSchema.partial();
 
 export const selectTestimonialSchema = createSelectSchema(testimonials);
 
+// Comment schemas
+export const insertCommentSchema = createInsertSchema(comments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateCommentSchema = createInsertSchema(comments).pick({
+  status: true,
+});
+
+export const selectCommentSchema = createSelectSchema(comments);
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -74,3 +99,7 @@ export type GalleryItem = typeof galleryItems.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type UpdateTestimonial = z.infer<typeof updateTestimonialSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
+
+export type InsertComment = z.infer<typeof insertCommentSchema>;
+export type UpdateComment = z.infer<typeof updateCommentSchema>;
+export type Comment = typeof comments.$inferSelect;

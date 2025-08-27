@@ -13,7 +13,10 @@ import {
   User,
   Tag,
   Loader2,
-  LogOut
+  LogOut,
+  CheckCircle2,
+  Ban as BanIcon,
+  Inbox
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,13 +30,18 @@ import {
   useDeleteGalleryItem,
   useCreateTestimonial,
   useUpdateTestimonial,
-  useDeleteTestimonial
+  useDeleteTestimonial,
+  useListCommentsByStatus,
+  useApproveComment,
+  useBanComment,
+  useDeleteComment
 } from '@/hooks/useApi';
-import type { GalleryItem, Testimonial, InsertGalleryItem, InsertTestimonial } from '@shared/schema';
+import type { GalleryItem, Testimonial, InsertGalleryItem, InsertTestimonial, Comment as AppComment } from '@shared/schema';
 
 function AdminDashboardContent() {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'gallery' | 'testimonials'>('gallery');
+  const [activeTab, setActiveTab] = useState<'gallery' | 'testimonials' | 'comments'>('gallery');
+  const [commentView, setCommentView] = useState<'pending' | 'approved' | 'banned'>('pending');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingItem, setEditingItem] = useState<GalleryItem | Testimonial | null>(null);
   const [modalType, setModalType] = useState<'gallery' | 'testimonial'>('gallery');
@@ -63,6 +71,14 @@ function AdminDashboardContent() {
   const createTestimonialMutation = useCreateTestimonial();
   const updateTestimonialMutation = useUpdateTestimonial();
   const deleteTestimonialMutation = useDeleteTestimonial();
+
+  // Comments moderation hooks
+  const { data: pendingComments = [], isLoading: pendingLoading } = useListCommentsByStatus('pending');
+  const { data: approvedComments = [], isLoading: approvedLoading } = useListCommentsByStatus('approved');
+  const { data: bannedComments = [], isLoading: bannedLoading } = useListCommentsByStatus('banned');
+  const approveCommentMutation = useApproveComment();
+  const banCommentMutation = useBanComment();
+  const deleteCommentMutation = useDeleteComment();
 
   // Categories
   const galleryCategories = {
@@ -165,69 +181,83 @@ function AdminDashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Admin Header Bar */}
-      <div className="bg-gradient-to-r from-[#00a693] to-[#eeaa22] shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      {/* Admin Header Bar - neutral, minimal accent */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            {/* Left Side - Title with User Name */}
-            <div className="flex items-center">
-              <Settings className="w-4 h-4 text-white ml-2" />
-              <h1 className="text-sm font-medium text-white">داشبورد مدیریت {user?.name}</h1>
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4 text-gray-600" aria-hidden="true" />
+              <h1 className="text-sm font-medium text-gray-900">داشبورد مدیریت {user?.name}</h1>
             </div>
-            
-            {/* Right Side - Action Buttons (Icons Only) */}
-            <div className="flex items-center gap-1">
-              <div className="group relative">
-                <a
-                  href="/"
-                  className="flex items-center justify-center w-7 h-7 bg-blue-500/80 backdrop-blur-sm text-white rounded-md hover:bg-blue-600 transition-all duration-300 border border-blue-400/50"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                </a>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-lg z-50">
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                  بازگشت به سایت اصلی
-                </div>
-              </div>
-              
-              <div className="group relative">
-                <a
-                  href="/admin/settings"
-                  className="flex items-center justify-center w-7 h-7 bg-white/10 backdrop-blur-sm text-white rounded-md hover:bg-white/20 transition-all duration-300 border border-white/20"
-                >
-                  <Settings className="w-3.5 h-3.5" />
-                </a>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-lg z-50">
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                  تنظیمات
-                </div>
-              </div>
-              
-              <div className="group relative">
-                <button
-                  onClick={logout}
-                  className="flex items-center justify-center w-7 h-7 bg-red-500/80 backdrop-blur-sm text-white rounded-md hover:bg-red-600 transition-all duration-300 border border-red-400/50"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-lg z-50">
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                  خروج
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <a
+                href="/"
+                className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                aria-label="بازگشت به سایت"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </a>
+              <a
+                href="/admin/settings"
+                className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                aria-label="تنظیمات"
+              >
+                <Settings className="w-4 h-4" aria-hidden="true" />
+              </a>
+              <button
+                onClick={logout}
+                className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                aria-label="خروج"
+              >
+                <LogOut className="w-4 h-4" aria-hidden="true" />
+              </button>
             </div>
           </div>
+        </div>
+        {/* Sticky Tab Bar - accessible, scrollable on mobile */}
+        <div className="border-t border-slate-800 bg-slate-900">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar" role="tablist" aria-label="بخش‌های مدیریت">
+            <div className="flex gap-2 py-2 min-w-max">
+              <button
+                role="tab"
+                aria-selected={activeTab === 'gallery'}
+                aria-controls="panel-gallery"
+                onClick={() => setActiveTab('gallery')}
+                className={`px-4 py-2 rounded-full text-sm border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 ${activeTab === 'gallery' ? 'border-cyan-500 text-slate-100 bg-slate-800' : 'border-slate-700 text-slate-300 hover:bg-slate-800/60'}`}
+              >
+                گالری
+              </button>
+              <button
+                role="tab"
+                aria-selected={activeTab === 'testimonials'}
+                aria-controls="panel-testimonials"
+                onClick={() => setActiveTab('testimonials')}
+                className={`px-4 py-2 rounded-full text-sm border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 ${activeTab === 'testimonials' ? 'border-cyan-500 text-slate-100 bg-slate-800' : 'border-slate-700 text-slate-300 hover:bg-slate-800/60'}`}
+              >
+                دل‌نوشته‌ها
+              </button>
+              <button
+                role="tab"
+                aria-selected={activeTab === 'comments'}
+                aria-controls="panel-comments"
+                onClick={() => setActiveTab('comments')}
+                className={`px-4 py-2 rounded-full text-sm border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 ${activeTab === 'comments' ? 'border-cyan-500 text-slate-100 bg-slate-800' : 'border-slate-700 text-slate-300 hover:bg-slate-800/60'}`}
+              >
+                نظرات
+              </button>
+            </div>
+          </nav>
         </div>
       </div>
 
       {/* Page Title */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="text-center">
-            <p className="text-gray-600">
+            <p className="text-slate-300">
               مدیریت محتوای سایت یادبود استاد مسعود محمدی
             </p>
           </div>
@@ -243,37 +273,12 @@ function AdminDashboardContent() {
           isLoading={statsLoading}
         />
         
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 mb-8">
-          <div className="flex border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab('gallery')}
-              className={`flex items-center px-6 py-4 font-medium transition-all duration-300 ${
-                activeTab === 'gallery'
-                  ? 'bg-[#00a693] text-white border-b-2 border-[#00a693]'
-                  : 'text-gray-700 hover:text-[#00a693] hover:bg-gray-50'
-              }`}
-            >
-              <Image className="w-5 h-5 ml-2" />
-              مدیریت گالری (تصاویر و ویدیوها)
-            </button>
-            <button
-              onClick={() => setActiveTab('testimonials')}
-              className={`flex items-center px-6 py-4 font-medium transition-all duration-300 ${
-                activeTab === 'testimonials'
-                  ? 'bg-[#00a693] text-white border-b-2 border-[#00a693]'
-                  : 'text-gray-700 hover:text-[#00a693] hover:bg-gray-50'
-              }`}
-            >
-              <MessageSquare className="w-5 h-5 ml-2" />
-              مدیریت دل‌نوشته‌ها
-            </button>
-          </div>
-        </div>
+        {/* Removed old tabs block (now in sticky header) */}
 
         {activeTab === 'gallery' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">مدیریت گالری</h2>
+              <h2 className="text-2xl font-bold text-gray-900">مدیریت گالری</h2>
               <button
                 onClick={handleAddGalleryItem}
                 disabled={createGalleryMutation.isPending}
@@ -289,22 +294,29 @@ function AdminDashboardContent() {
             </div>
 
             {galleryLoading && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-[#00a693]" />
-                <span className="mr-2 text-gray-600">در حال بارگذاری...</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="در حال بارگذاری گالری">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-4 animate-pulse">
+                    <div className="w-full h-48 bg-neutral-200 rounded-xl mb-4" />
+                    <div className="h-4 bg-neutral-200 rounded w-2/3 mb-2" />
+                    <div className="h-3 bg-neutral-200 rounded w-1/2 mb-2" />
+                    <div className="h-3 bg-neutral-200 rounded w-1/3" />
+                  </div>
+                ))}
               </div>
             )}
 
             {galleryError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-                خطا در بارگذاری آیتم‌های گالری
+              <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                <Inbox className="w-5 h-5 text-red-500 mt-0.5" aria-hidden="true" />
+                <div className="text-sm text-red-700">خطا در بارگذاری آیتم‌های گالری</div>
               </div>
             )}
 
             {!galleryLoading && !galleryError && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="group grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hover:[&>div]:opacity-70 [&>div:hover]:opacity-100">
                 {galleryItems.map((item) => (
-                  <div key={item.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:ring-1 hover:ring-blue-500/20">
                     <div className="relative">
                       {item.type === 'image' ? (
                         <>
@@ -321,10 +333,10 @@ function AdminDashboardContent() {
                               console.log('Image loaded successfully:', item.src);
                             }}
                           />
-                          <div className="hidden w-full h-48 bg-gray-200 flex items-center justify-center flex-col">
-                            <Image className="w-12 h-12 text-gray-400 mb-2" />
-                            <p className="text-gray-500 text-sm">تصویر بارگذاری نشد</p>
-                            <p className="text-gray-400 text-xs">{item.src}</p>
+                          <div className="hidden w-full h-48 bg-slate-700 flex items-center justify-center flex-col">
+                            <Image className="w-12 h-12 text-slate-300 mb-2" />
+                            <p className="text-slate-300 text-sm">تصویر بارگذاری نشد</p>
+                            <p className="text-slate-400 text-xs">{item.src}</p>
                           </div>
                         </>
                       ) : (
@@ -336,23 +348,24 @@ function AdminDashboardContent() {
                               className="w-full h-48 object-cover"
                             />
                           ) : (
-                            <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                              <Video className="w-12 h-12 text-gray-400" />
+                            <div className="w-full h-48 bg-slate-700 flex items-center justify-center">
+                              <Video className="w-12 h-12 text-slate-300" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                            <Video className="w-8 h-8 text-white" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute inset-0 flex items-end justify-between p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="text-slate-100 text-sm font-medium line-clamp-1">{item.title}</div>
+                            {item.duration && (
+                              <div className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                                {item.duration}
+                              </div>
+                            )}
                           </div>
-                          {item.duration && (
-                            <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                              {item.duration}
-                            </div>
-                          )}
                         </div>
                       )}
                       
                       <div className="absolute top-2 left-2">
-                        <div className={`p-1.5 rounded-full ${
+                        <div className={`p-1.5 rounded-full shadow-sm ${
                           item.type === 'image' 
                             ? 'bg-[#00a693]/90 text-white' 
                             : 'bg-[#eeaa22]/90 text-white'
@@ -367,8 +380,8 @@ function AdminDashboardContent() {
                     </div>
 
                     <div className="p-4">
-                      <h3 className="font-bold text-lg text-gray-800 mb-2">{item.title}</h3>
-                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <h3 className="font-semibold text-base text-gray-900 mb-2">{item.title}</h3>
+                      <div className="space-y-1.5 text-sm text-gray-600 mb-4">
                         <div className="flex items-center">
                           <Tag className="w-4 h-4 ml-1" />
                           {galleryCategories[item.category]}
@@ -390,26 +403,20 @@ function AdminDashboardContent() {
                         <button
                           onClick={() => handleEditGalleryItem(item)}
                           disabled={updateGalleryMutation.isPending}
-                          className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300 disabled:opacity-50"
+                          className="flex-1 inline-flex items-center justify-center h-10 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
+                          aria-label={`ویرایش ${item.title}`}
                         >
-                          {updateGalleryMutation.isPending ? (
-                            <Loader2 className="w-4 h-4 ml-1 animate-spin" />
-                          ) : (
-                            <Edit className="w-4 h-4 ml-1" />
-                          )}
-                          ویرایش
+                          <Edit className="w-4 h-4 ml-1" aria-hidden="true" />
+                          <span>ویرایش</span>
                         </button>
                         <button
                           onClick={() => handleDeleteGalleryItem(item.id)}
                           disabled={deleteGalleryMutation.isPending}
-                          className="flex-1 flex items-center justify-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300 disabled:opacity-50"
+                          className="flex-1 inline-flex items-center justify-center h-10 px-3 rounded-lg border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 disabled:opacity-50"
+                          aria-label={`حذف ${item.title}`}
                         >
-                          {deleteGalleryMutation.isPending ? (
-                            <Loader2 className="w-4 h-4 ml-1 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4 ml-1" />
-                          )}
-                          حذف
+                          <Trash2 className="w-4 h-4 ml-1" aria-hidden="true" />
+                          <span>حذف</span>
                         </button>
                       </div>
                     </div>
@@ -423,7 +430,7 @@ function AdminDashboardContent() {
         {activeTab === 'testimonials' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">مدیریت دل‌نوشته‌ها</h2>
+              <h2 className="text-2xl font-bold text-gray-900">مدیریت دل‌نوشته‌ها</h2>
               <button
                 onClick={handleAddTestimonial}
                 disabled={createTestimonialMutation.isPending}
@@ -439,25 +446,32 @@ function AdminDashboardContent() {
             </div>
 
             {testimonialsLoading && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-[#00a693]" />
-                <span className="mr-2 text-gray-600">در حال بارگذاری...</span>
+              <div className="space-y-4" role="status" aria-label="در حال بارگذاری دل‌نوشته‌ها">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 animate-pulse">
+                    <div className="h-4 bg-neutral-200 rounded w-1/3 mb-3" />
+                    <div className="h-3 bg-neutral-200 rounded w-1/2 mb-2" />
+                    <div className="h-3 bg-neutral-200 rounded w-2/3 mb-4" />
+                    <div className="h-24 bg-neutral-200 rounded" />
+                  </div>
+                ))}
               </div>
             )}
 
             {testimonialsError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-                خطا در بارگذاری دل‌نوشته‌ها
+              <div className="bg-white border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                <Inbox className="w-5 h-5 text-red-500 mt-0.5" aria-hidden="true" />
+                <div className="text-sm text-red-700">خطا در بارگذاری دل‌نوشته‌ها</div>
               </div>
             )}
 
             {!testimonialsLoading && !testimonialsError && (
-              <div className="space-y-6">
+              <div className="group space-y-6 hover:[&>div]:opacity-70 [&>div:hover]:opacity-100">
                 {testimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6">
+                  <div key={testimonial.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:ring-1 hover:ring-blue-500/20">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">{testimonial.title}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{testimonial.title}</h3>
                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
                           <div className="flex items-center">
                             <User className="w-4 h-4 ml-1" />
@@ -479,19 +493,16 @@ function AdminDashboardContent() {
                         <button
                           onClick={() => handleEditTestimonial(testimonial)}
                           disabled={updateTestimonialMutation.isPending}
-                          className="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300 disabled:opacity-50"
+                          className="inline-flex items-center justify-center h-10 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
+                          aria-label={`ویرایش ${testimonial.title}`}
                         >
-                          {updateTestimonialMutation.isPending ? (
-                            <Loader2 className="w-4 h-4 ml-1 animate-spin" />
-                          ) : (
-                            <Edit className="w-4 h-4 ml-1" />
-                          )}
-                          ویرایش
+                          <Edit className="w-4 h-4 ml-1" aria-hidden="true" />
+                          <span>ویرایش</span>
                         </button>
                         <button
                           onClick={() => handleDeleteTestimonial(testimonial.id)}
                           disabled={deleteTestimonialMutation.isPending}
-                          className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300 disabled:opacity-50"
+                          className="inline-flex items-center justify-center h-10 px-3 rounded-lg border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 disabled:opacity-50"
                         >
                           {deleteTestimonialMutation.isPending ? (
                             <Loader2 className="w-4 h-4 ml-1 animate-spin" />
@@ -512,6 +523,111 @@ function AdminDashboardContent() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'comments' && (
+          <div id="panel-comments" role="tabpanel" aria-labelledby="tab-comments" className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">مدیریت نظرات کاربران</h2>
+            {/* Mobile segmented control */}
+            <div className="lg:hidden">
+              <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-neutral-200">
+                {(['pending','approved','banned'] as const).map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => setCommentView(key)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a693] ${commentView === key ? 'bg-[#00a693]/10 text-neutral-900' : 'text-neutral-700 hover:bg-neutral-50'}`}
+                  >
+                    {key === 'pending' ? 'در انتظار' : key === 'approved' ? 'تایید شده' : 'مسدود'}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4">
+                {commentView === 'pending' && (
+                  <CommentsColumn
+                    title="در انتظار تایید"
+                    colorClass="border-amber-200"
+                    tintClass="bg-amber-50/60"
+                    emptyText="نظری برای تایید وجود ندارد"
+                    isLoading={pendingLoading}
+                    comments={pendingComments}
+                    onApprove={(id) => approveCommentMutation.mutate(id)}
+                    onBan={(id) => banCommentMutation.mutate(id)}
+                    onDelete={(id) => deleteCommentMutation.mutate(id)}
+                    showApprove
+                    showBan
+                  />
+                )}
+                {commentView === 'approved' && (
+                  <CommentsColumn
+                    title="تایید شده"
+                    colorClass="border-emerald-200"
+                    tintClass="bg-emerald-50/60"
+                    emptyText="نظری تایید نشده است"
+                    isLoading={approvedLoading}
+                    comments={approvedComments}
+                    onApprove={undefined}
+                    onBan={(id) => banCommentMutation.mutate(id)}
+                    onDelete={(id) => deleteCommentMutation.mutate(id)}
+                    showBan
+                  />
+                )}
+                {commentView === 'banned' && (
+                  <CommentsColumn
+                    title="مسدود شده"
+                    colorClass="border-rose-200"
+                    tintClass="bg-rose-50/60"
+                    emptyText="نظری مسدود نشده است"
+                    isLoading={bannedLoading}
+                    comments={bannedComments}
+                    onApprove={(id) => approveCommentMutation.mutate(id)}
+                    onBan={undefined}
+                    onDelete={(id) => deleteCommentMutation.mutate(id)}
+                    showApprove
+                  />
+                )}
+              </div>
+            </div>
+            {/* Desktop 3-column layout */}
+            <div className="hidden lg:grid grid-cols-3 gap-6">
+              <CommentsColumn
+                title="در انتظار تایید"
+                colorClass="border-amber-200"
+                tintClass="bg-amber-50/60"
+                emptyText="نظری برای تایید وجود ندارد"
+                isLoading={pendingLoading}
+                comments={pendingComments}
+                onApprove={(id) => approveCommentMutation.mutate(id)}
+                onBan={(id) => banCommentMutation.mutate(id)}
+                onDelete={(id) => deleteCommentMutation.mutate(id)}
+                showApprove
+                showBan
+              />
+              <CommentsColumn
+                title="تایید شده"
+                colorClass="border-emerald-200"
+                tintClass="bg-emerald-50/60"
+                emptyText="نظری تایید نشده است"
+                isLoading={approvedLoading}
+                comments={approvedComments}
+                onApprove={undefined}
+                onBan={(id) => banCommentMutation.mutate(id)}
+                onDelete={(id) => deleteCommentMutation.mutate(id)}
+                showBan
+              />
+              <CommentsColumn
+                title="مسدود شده"
+                colorClass="border-rose-200"
+                tintClass="bg-rose-50/60"
+                emptyText="نظری مسدود نشده است"
+                isLoading={bannedLoading}
+                comments={bannedComments}
+                onApprove={(id) => approveCommentMutation.mutate(id)}
+                onBan={undefined}
+                onDelete={(id) => deleteCommentMutation.mutate(id)}
+                showApprove
+              />
+            </div>
           </div>
         )}
       </div>
@@ -807,5 +923,83 @@ export default function AdminDashboard() {
     <ProtectedRoute requireAdmin={true}>
       <AdminDashboardContent />
     </ProtectedRoute>
+  );
+}
+
+function CommentsColumn({
+  title,
+  colorClass,
+  emptyText,
+  isLoading,
+  comments,
+  onApprove,
+  onBan,
+  onDelete,
+  showApprove,
+  showBan,
+  tintClass
+}: {
+  title: string;
+  colorClass: string;
+  emptyText: string;
+  isLoading: boolean;
+  comments: AppComment[];
+  onApprove?: (id: number) => void;
+  onBan?: (id: number) => void;
+  onDelete: (id: number) => void;
+  showApprove?: boolean;
+  showBan?: boolean;
+  tintClass?: string;
+}) {
+  return (
+    <div className={`rounded-2xl shadow-sm border ${colorClass} ${tintClass || 'bg-white'} p-4`}>
+      <h3 className="text-base font-semibold text-neutral-900 mb-3">{title}</h3>
+      {isLoading ? (
+        <div className="flex items-center gap-2 text-gray-600">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          در حال بارگذاری...
+        </div>
+      ) : comments.length === 0 ? (
+        <div className="flex items-start gap-2 text-neutral-600">
+          <Inbox className="w-4 h-4 mt-0.5" aria-hidden="true" />
+          <span className="text-sm">{emptyText}</span>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {comments.map((c) => (
+            <div key={c.id} className="border border-neutral-200 bg-white rounded-xl p-3" dir="rtl">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-neutral-800 font-medium">{c.firstName} {c.lastName}</div>
+                <div className="flex items-center gap-2">
+                  {showApprove && (
+                    <button
+                      onClick={() => onApprove && onApprove(c.id)}
+                      className="h-8 px-2 text-xs rounded border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                    >
+                      تایید
+                    </button>
+                  )}
+                  {showBan && (
+                    <button
+                      onClick={() => onBan && onBan(c.id)}
+                      className="h-8 px-2 text-xs rounded border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                    >
+                      مسدود
+                    </button>
+                  )}
+                  <button
+                    onClick={() => onDelete(c.id)}
+                    className="h-8 px-2 text-xs rounded border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                  >
+                    حذف
+                  </button>
+                </div>
+              </div>
+              <div className="text-neutral-800 whitespace-pre-line text-sm">{c.content}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

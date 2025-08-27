@@ -8,8 +8,11 @@ import {
   insertGalleryItemSchema, 
   updateGalleryItemSchema,
   insertTestimonialSchema,
-  updateTestimonialSchema
+  updateTestimonialSchema,
+  insertCommentSchema,
+  updateCommentSchema
 } from "@shared/schema";
+import { containsProfanity, normalizePersian } from "./validation";
 import { 
   validateUser, 
   generateToken, 
@@ -320,6 +323,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Testimonial deleted successfully" });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete testimonial" });
+    }
+  });
+
+  // Comments API Routes
+  
+  // GET /api/testimonials/:id/comments - Public approved comments for a testimonial
+  app.get("/api/testimonials/:id/comments", async (req, res) => {
+    try {
+      const testimonialId = parseInt(req.params.id);
+      const comments = await storage.getApprovedCommentsForTestimonial(testimonialId);
+      res.json(comments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch comments" });
+    }
+  });
+
+  // POST /api/testimonials/:id/comments - Public submit comment (pending or banned if profane)
+  app.post("/api/testimonials/:id/comments", async (req, res) => {
+    try {
+      const testimonialId = parseInt(req.params.id);
+      const { firstName, lastName, content } = req.body || {};
+
+      // Strong validation for Persian-only fields
+      const persianNameRegex = /^[\u0600-\u06FF\s]{2,30}$/;
+      const persianContentRegex = /^[\u0600-\u06FF\s\.,!؟،؛:\-\(\)\n]{5,600}$/;
+
+      if (!firstName || !lastName || !content) {
+        return res.status(400).json({ error: "همه فیلدها الزامی است" });
+      }
+      if (!persianNameRegex.test(firstName)) {
+        return res.status(400).json({ error: "نام باید فارسی و بین ۲ تا ۳۰ کاراکتر باشد" });
+      }
+      if (!persianNameRegex.test(lastName)) {
+        return res.status(400).json({ error: "نام خانوادگی باید فارسی و بین ۲ تا ۳۰ کاراکتر باشد" });
+      }
+      if (!persianContentRegex.test(content)) {
+        return res.status(400).json({ error: "متن کامنت باید فارسی و بین ۵ تا ۶۰۰ کاراکتر باشد" });
+      }
+
+      const normalized = normalizePersian(`${firstName} ${lastName} ${content}`);
+      const profanity = containsProfanity(normalized);
+
+      const status = profanity.matched.length > 0 ? 'banned' : 'pending';
+      const validated = insertCommentSchema.parse({
+        testimonialId,
+        firstName,
+        lastName,
+        content,
+        status
+      });
+      const created = await storage.createComment(validated);
+      res.status(201).json({ id: created.id, status: created.status });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'ZodError') {
+        return res.status(400).json({ error: "Invalid data", details: error });
+      }
+      res.status(500).json({ error: "Failed to submit comment" });
+    }
+  });
+
+  // Admin moderation routes
+  // GET /api/comments?status=pending - List comments by status
+  app.get("/api/comments", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const status = (req.query.status as string) || 'pending';
+      if (!['pending','approved','banned'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+      const list = await storage.getCommentsByStatus(status as any);
+      res.json(list);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch comments" });
+    }
+  });
+
+  // PUT /api/comments/:id/approve
+  app.put("/api/comments/:id/approve", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updated = await storage.updateCommentStatus(id, { status: 'approved' });
+      if (!updated) return res.status(404).json({ error: "Comment not found" });
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to approve comment" });
+    }
+  });
+
+  // PUT /api/comments/:id/ban
+  app.put("/api/comments/:id/ban", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updated = await storage.updateCommentStatus(id, { status: 'banned' });
+      if (!updated) return res.status(404).json({ error: "Comment not found" });
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to ban comment" });
+    }
+  });
+
+  // DELETE /api/comments/:id
+  app.delete("/api/comments/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const ok = await storage.deleteComment(id);
+      if (!ok) return res.status(404).json({ error: "Comment not found" });
+      res.json({ message: "Comment deleted" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete comment" });
     }
   });
 

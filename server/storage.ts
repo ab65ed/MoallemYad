@@ -6,7 +6,10 @@ import {
   type UpdateGalleryItem,
   type Testimonial,
   type InsertTestimonial,
-  type UpdateTestimonial
+  type UpdateTestimonial,
+  type Comment,
+  type InsertComment,
+  type UpdateComment
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -29,19 +32,29 @@ export interface IStorage {
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
   updateTestimonial(id: number, testimonial: UpdateTestimonial): Promise<Testimonial | undefined>;
   deleteTestimonial(id: number): Promise<boolean>;
+
+  // Comment methods
+  getApprovedCommentsForTestimonial(testimonialId: number): Promise<Comment[]>;
+  getCommentsByStatus(status: 'pending' | 'approved' | 'banned'): Promise<Comment[]>;
+  createComment(comment: InsertComment): Promise<Comment>;
+  updateCommentStatus(id: number, update: UpdateComment): Promise<Comment | undefined>;
+  deleteComment(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private galleryItems: Map<number, GalleryItem>;
   private testimonials: Map<number, Testimonial>;
+  private comments: Map<number, Comment>;
   private nextGalleryId: number = 1;
   private nextTestimonialId: number = 1;
+  private nextCommentId: number = 1;
 
   constructor() {
     this.users = new Map();
     this.galleryItems = new Map();
     this.testimonials = new Map();
+    this.comments = new Map();
     
     // Initialize with existing data
     this.initializeData();
@@ -291,6 +304,8 @@ export class MemStorage implements IStorage {
       };
       this.testimonials.set(testimonial.id, testimonial);
     });
+
+    // Initialize with no comments
   }
 
   // User methods
@@ -387,6 +402,42 @@ export class MemStorage implements IStorage {
 
   async deleteTestimonial(id: number): Promise<boolean> {
     return this.testimonials.delete(id);
+  }
+
+  // Comment methods
+  async getApprovedCommentsForTestimonial(testimonialId: number): Promise<Comment[]> {
+    return Array.from(this.comments.values())
+      .filter(c => c.testimonialId === testimonialId && c.status === 'approved')
+      .sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+  }
+
+  async getCommentsByStatus(status: 'pending' | 'approved' | 'banned'): Promise<Comment[]> {
+    return Array.from(this.comments.values())
+      .filter(c => c.status === status)
+      .sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+  }
+
+  async createComment(comment: InsertComment): Promise<Comment> {
+    const newComment: Comment = {
+      ...comment,
+      id: this.nextCommentId++,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as Comment;
+    this.comments.set(newComment.id, newComment);
+    return newComment;
+  }
+
+  async updateCommentStatus(id: number, update: UpdateComment): Promise<Comment | undefined> {
+    const existing = this.comments.get(id);
+    if (!existing) return undefined;
+    const updated: Comment = { ...existing, ...update, updatedAt: new Date() };
+    this.comments.set(id, updated);
+    return updated;
+  }
+
+  async deleteComment(id: number): Promise<boolean> {
+    return this.comments.delete(id);
   }
 }
 

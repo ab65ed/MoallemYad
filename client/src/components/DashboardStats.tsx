@@ -5,19 +5,20 @@ interface StatsCardProps {
   value: number;
   icon: React.ReactNode;
   color: string;
+  tint: string;
   change?: {
     value: number;
     type: 'increase' | 'decrease';
   };
 }
 
-function StatsCard({ title, value, icon, color, change }: StatsCardProps & { isLoading?: boolean }) {
+function StatsCard({ title, value, icon, color, tint, change }: StatsCardProps & { isLoading?: boolean }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-shadow duration-300">
+    <div className={`bg-gradient-to-br ${tint} rounded-2xl shadow-sm border border-slate-200 p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:ring-1 hover:ring-slate-300`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-800">{value.toLocaleString('fa-IR')}</p>
+          <p className="text-sm font-medium text-slate-700 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-slate-900">{value.toLocaleString('fa-IR')}</p>
           {change && (
             <div className={`flex items-center mt-2 text-sm ${
               change.type === 'increase' ? 'text-green-600' : 'text-red-600'
@@ -62,6 +63,7 @@ export default function DashboardStats({
       value: totalImages,
       icon: <Image className="w-8 h-8 text-blue-600" />,
       color: 'bg-blue-100',
+      tint: 'from-blue-50 to-blue-100/50',
       change: recentActivity ? {
         value: recentActivity.images,
         type: 'increase' as const
@@ -72,6 +74,7 @@ export default function DashboardStats({
       value: totalVideos,
       icon: <Video className="w-8 h-8 text-purple-600" />,
       color: 'bg-purple-100',
+      tint: 'from-purple-50 to-purple-100/50',
       change: recentActivity ? {
         value: recentActivity.videos,
         type: 'increase' as const
@@ -82,6 +85,7 @@ export default function DashboardStats({
       value: totalTestimonials,
       icon: <MessageSquare className="w-8 h-8 text-green-600" />,
       color: 'bg-green-100',
+      tint: 'from-emerald-50 to-emerald-100/50',
       change: recentActivity ? {
         value: recentActivity.testimonials,
         type: 'increase' as const
@@ -91,7 +95,8 @@ export default function DashboardStats({
       title: 'کل محتوا',
       value: totalImages + totalVideos + totalTestimonials,
       icon: <TrendingUp className="w-8 h-8 text-[#00a693]" />,
-      color: 'bg-[#00a693]/10'
+      color: 'bg-[#00a693]/10',
+      tint: 'from-emerald-50 to-[#00a693]/10'
     }
   ];
 
@@ -99,14 +104,14 @@ export default function DashboardStats({
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[1, 2, 3, 4].map((index) => (
-          <div key={index} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div key={index} className="bg-neutral-50 rounded-2xl shadow-sm border border-neutral-200 p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded animate-pulse mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                <div className="h-4 bg-neutral-200 rounded animate-pulse mb-2"></div>
+                <div className="h-8 bg-neutral-200 rounded animate-pulse mb-2"></div>
+                <div className="h-3 bg-neutral-200 rounded animate-pulse w-2/3"></div>
               </div>
-              <div className="w-16 h-16 bg-gray-200 rounded-2xl animate-pulse"></div>
+              <div className="w-16 h-16 bg-neutral-200 rounded-2xl animate-pulse"></div>
             </div>
           </div>
         ))}
@@ -123,6 +128,7 @@ export default function DashboardStats({
           value={stat.value}
           icon={stat.icon}
           color={stat.color}
+          tint={stat.tint}
           change={stat.change}
         />
       ))}

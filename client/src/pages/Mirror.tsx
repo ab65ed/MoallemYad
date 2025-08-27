@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Heart, Loader2, BookOpen, X } from "lucide-react";
-import { useTestimonials } from '@/hooks/useApi';
+import { useTestimonials, useCommentsForTestimonial, useSubmitComment } from '@/hooks/useApi';
 import type { Testimonial } from '@shared/schema';
 
 export default function Mirror() {
@@ -145,11 +145,11 @@ export default function Mirror() {
             </p>
           </div>
         ) : (
-          <div className="relative">
+          <div className="relative z-[70]">
             {/* Simple Carousel - Show Current Item Only */}
             <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
               <div className="p-8 md:p-12">
-                <div className="max-w-4xl mx-auto text-center">
+                <div className="max-w-4xl mx-auto text-right" dir="rtl">
                   {/* Quote Icon */}
                   <div className="mb-6">
                     <div className="w-12 h-12 bg-gradient-to-r from-[#00a693] to-[#eeaa22] rounded-full flex items-center justify-center mx-auto">
@@ -163,7 +163,7 @@ export default function Mirror() {
                   </h2>
 
                   {/* Truncated Content */}
-                  <div className="text-base md:text-lg text-gray-700 leading-relaxed mb-6 max-w-3xl mx-auto">
+                  <div className="text-base md:text-lg text-gray-700 leading-relaxed mb-6 max-w-3xl mx-auto text-right" dir="rtl">
                     <p className="mb-4">
                       {truncateText(filteredTestimonials[currentIndex]?.content || '')}
                     </p>
@@ -256,7 +256,7 @@ export default function Mirror() {
 
       {/* Full Testimonial Modal */}
       {selectedTestimonial && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto w-full">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-800">
@@ -270,7 +270,7 @@ export default function Mirror() {
               </button>
             </div>
             
-            <div className="p-8">
+            <div className="p-8" dir="rtl">
               {/* Quote Icon */}
               <div className="mb-6 text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-[#00a693] to-[#eeaa22] rounded-full flex items-center justify-center mx-auto">
@@ -279,7 +279,7 @@ export default function Mirror() {
               </div>
 
               {/* Full Content */}
-              <div className="text-lg text-gray-700 leading-relaxed mb-8 text-center max-w-3xl mx-auto">
+              <div className="text-lg text-gray-700 leading-relaxed mb-8 text-right max-w-3xl mx-auto">
                 <p className="whitespace-pre-line">
                   {selectedTestimonial.content}
                 </p>
@@ -307,10 +307,122 @@ export default function Mirror() {
                   </div>
                 </div>
               </div>
+
+              {/* Comments Section */}
+              <CommentsSection testimonialId={selectedTestimonial.id} />
             </div>
           </div>
         </div>
       )}
     </main>
+  );
+}
+
+function CommentsSection({ testimonialId }: { testimonialId: number }) {
+  const { data: comments = [], isLoading } = useCommentsForTestimonial(testimonialId);
+  const submitMutation = useSubmitComment();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [content, setContent] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const nameRegex = /^[\u0600-\u06FF\s]{2,30}$/;
+  const contentRegex = /^[\u0600-\u06FF\s\.,!؟،؛:\-\(\)\n]{5,600}$/;
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    if (!nameRegex.test(firstName)) {
+      setError("نام باید فارسی و بین ۲ تا ۳۰ کاراکتر باشد");
+      return;
+    }
+    if (!nameRegex.test(lastName)) {
+      setError("نام خانوادگی باید فارسی و بین ۲ تا ۳۰ کاراکتر باشد");
+      return;
+    }
+    if (!contentRegex.test(content)) {
+      setError("متن کامنت باید فارسی و بین ۵ تا ۶۰۰ کاراکتر باشد");
+      return;
+    }
+    try {
+      const result = await submitMutation.mutateAsync({ testimonialId, firstName, lastName, content });
+      if (result.status === 'pending') {
+        setSuccess("کامنت شما ثبت شد و پس از تایید نمایش داده می‌شود.");
+      } else if (result.status === 'banned') {
+        setSuccess("کامنت شما شامل کلمات نامناسب بود و تأیید نشد.");
+      } else {
+        setSuccess("کامنت ثبت شد.");
+      }
+      setFirstName("");
+      setLastName("");
+      setContent("");
+    } catch (err: any) {
+      setError(err?.message || 'خطا در ارسال کامنت');
+    }
+  };
+
+  return (
+    <div className="mt-10" dir="rtl">
+      <h3 className="text-xl font-bold text-gray-800 mb-4">نظرات</h3>
+      <div className="space-y-4 mb-8">
+        {isLoading ? (
+          <div className="text-gray-500">در حال بارگذاری نظرات...</div>
+        ) : comments.length === 0 ? (
+          <div className="text-gray-500">نظری ثبت نشده است.</div>
+        ) : (
+          comments.map((c) => (
+            <div key={c.id} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <div className="text-sm text-gray-600 mb-2">{c.firstName} {c.lastName}</div>
+              <div className="text-gray-800 whitespace-pre-line">{c.content}</div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <h4 className="text-lg font-semibold text-gray-800 mb-3">ثبت نظر</h4>
+      <form onSubmit={onSubmit} className="space-y-4">
+        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {success && <div className="text-green-600 text-sm">{success}</div>}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="نام"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00a693] text-right"
+            dir="rtl"
+            required
+          />
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="نام خانوادگی"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00a693] text-right"
+            dir="rtl"
+            required
+          />
+        </div>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="متن نظر شما..."
+          className="w-full border border-gray-300 rounded-xl px-4 py-3 h-28 focus:outline-none focus:ring-2 focus:ring-[#00a693] text-right"
+          dir="rtl"
+          required
+        />
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={submitMutation.isPending}
+            className="px-6 py-3 rounded-full bg-gradient-to-r from-[#00a693] to-[#eeaa22] text-white font-medium disabled:opacity-60"
+          >
+            {submitMutation.isPending ? 'در حال ارسال...' : 'ارسال نظر'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

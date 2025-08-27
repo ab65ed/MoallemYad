@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GalleryItem, InsertGalleryItem, UpdateGalleryItem, Testimonial, InsertTestimonial, UpdateTestimonial } from '@shared/schema';
+import type { GalleryItem, InsertGalleryItem, UpdateGalleryItem, Testimonial, InsertTestimonial, UpdateTestimonial, Comment } from '@shared/schema';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -115,6 +115,47 @@ const api = {
       return response.json();
     },
   },
+
+  // Comments API
+  comments: {
+    getForTestimonial: async (testimonialId: number): Promise<Comment[]> => {
+      const response = await fetch(`/api/testimonials/${testimonialId}/comments`);
+      if (!response.ok) throw new Error('Failed to fetch comments');
+      return response.json();
+    },
+    submit: async ({ testimonialId, firstName, lastName, content }: { testimonialId: number; firstName: string; lastName: string; content: string; }): Promise<{ id: number; status: string }> => {
+      const response = await fetch(`/api/testimonials/${testimonialId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, content })
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const msg = (data && data.error) ? data.error : 'Failed to submit comment';
+        throw new Error(msg);
+      }
+      return response.json();
+    },
+    listByStatus: async (status: 'pending' | 'approved' | 'banned'): Promise<Comment[]> => {
+      const response = await fetch(`/api/comments?status=${status}`, { headers: getAuthHeaders() });
+      if (!response.ok) throw new Error('Failed to fetch comments list');
+      return response.json();
+    },
+    approve: async (id: number): Promise<Comment> => {
+      const response = await fetch(`/api/comments/${id}/approve`, { method: 'PUT', headers: getAuthHeaders() });
+      if (!response.ok) throw new Error('Failed to approve comment');
+      return response.json();
+    },
+    ban: async (id: number): Promise<Comment> => {
+      const response = await fetch(`/api/comments/${id}/ban`, { method: 'PUT', headers: getAuthHeaders() });
+      if (!response.ok) throw new Error('Failed to ban comment');
+      return response.json();
+    },
+    remove: async (id: number): Promise<void> => {
+      const response = await fetch(`/api/comments/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+      if (!response.ok) throw new Error('Failed to delete comment');
+    }
+  }
 };
 
 // Gallery hooks
@@ -219,6 +260,64 @@ export const useDeleteTestimonial = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['testimonials'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
+    },
+  });
+};
+
+// Comments hooks
+export const useCommentsForTestimonial = (testimonialId: number) => {
+  return useQuery({
+    queryKey: ['comments', 'testimonial', testimonialId],
+    queryFn: () => api.comments.getForTestimonial(testimonialId),
+    enabled: !!testimonialId,
+  });
+};
+
+export const useSubmitComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.comments.submit,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', 'testimonial', variables.testimonialId] });
+    },
+  });
+};
+
+export const useListCommentsByStatus = (status: 'pending' | 'approved' | 'banned') => {
+  return useQuery({
+    queryKey: ['comments', 'status', status],
+    queryFn: () => api.comments.listByStatus(status),
+  });
+};
+
+export const useApproveComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.comments.approve,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', 'status', 'pending'] });
+      queryClient.invalidateQueries({ queryKey: ['comments', 'status', 'approved'] });
+    },
+  });
+};
+
+export const useBanComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.comments.ban,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', 'status', 'pending'] });
+      queryClient.invalidateQueries({ queryKey: ['comments', 'status', 'banned'] });
+    },
+  });
+};
+
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.comments.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
     },
   });
 };

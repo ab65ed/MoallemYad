@@ -6,7 +6,10 @@ import {
   type UpdateGalleryItem,
   type Testimonial,
   type InsertTestimonial,
-  type UpdateTestimonial
+  type UpdateTestimonial,
+  type Comment,
+  type InsertComment,
+  type UpdateComment
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import fs from "fs";
@@ -17,8 +20,10 @@ interface StorageData {
   users: Record<string, User>;
   galleryItems: Record<number, GalleryItem>;
   testimonials: Record<number, Testimonial>;
+  comments: Record<number, Comment>;
   nextGalleryId: number;
   nextTestimonialId: number;
+  nextCommentId: number;
 }
 
 export class FileStorage implements IStorage {
@@ -34,15 +39,24 @@ export class FileStorage implements IStorage {
     try {
       if (fs.existsSync(this.dataPath)) {
         const fileContent = fs.readFileSync(this.dataPath, 'utf-8');
-        this.data = JSON.parse(fileContent);
+        this.data = JSON.parse(fileContent) as StorageData;
+        // Backward-compatible defaults for newly added comment storage
+        if (!this.data.comments) {
+          this.data.comments = {} as Record<number, Comment>;
+        }
+        if (!this.data.nextCommentId) {
+          this.data.nextCommentId = 1;
+        }
       } else {
         // اگر فایل وجود ندارد، داده‌های اولیه را ایجاد کن
         this.data = {
           users: {},
           galleryItems: {},
           testimonials: {},
+          comments: {},
           nextGalleryId: 1,
-          nextTestimonialId: 1
+          nextTestimonialId: 1,
+          nextCommentId: 1
         };
         this.initializeData();
         this.saveData();
@@ -54,8 +68,10 @@ export class FileStorage implements IStorage {
         users: {},
         galleryItems: {},
         testimonials: {},
+        comments: {},
         nextGalleryId: 1,
-        nextTestimonialId: 1
+        nextTestimonialId: 1,
+        nextCommentId: 1
       };
       this.initializeData();
       this.saveData();
@@ -314,6 +330,7 @@ export class FileStorage implements IStorage {
       };
       this.data.testimonials[testimonial.id] = testimonial;
     });
+    // No initial comments
   }
 
   // User methods
@@ -419,6 +436,49 @@ export class FileStorage implements IStorage {
   async deleteTestimonial(id: number): Promise<boolean> {
     if (this.data.testimonials[id]) {
       delete this.data.testimonials[id];
+      this.saveData();
+      return true;
+    }
+    return false;
+  }
+
+  // Comment methods
+  async getApprovedCommentsForTestimonial(testimonialId: number): Promise<Comment[]> {
+    return Object.values(this.data.comments)
+      .filter(c => c.testimonialId === testimonialId && c.status === 'approved')
+      .sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+  }
+
+  async getCommentsByStatus(status: 'pending' | 'approved' | 'banned'): Promise<Comment[]> {
+    return Object.values(this.data.comments)
+      .filter(c => c.status === status)
+      .sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+  }
+
+  async createComment(comment: InsertComment): Promise<Comment> {
+    const newComment: Comment = {
+      ...comment,
+      id: this.data.nextCommentId++,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as Comment;
+    this.data.comments[newComment.id] = newComment;
+    this.saveData();
+    return newComment;
+  }
+
+  async updateCommentStatus(id: number, update: UpdateComment): Promise<Comment | undefined> {
+    const existing = this.data.comments[id];
+    if (!existing) return undefined;
+    const updated: Comment = { ...existing, ...update, updatedAt: new Date() };
+    this.data.comments[id] = updated;
+    this.saveData();
+    return updated;
+  }
+
+  async deleteComment(id: number): Promise<boolean> {
+    if (this.data.comments[id]) {
+      delete this.data.comments[id];
       this.saveData();
       return true;
     }

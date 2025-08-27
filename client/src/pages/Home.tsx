@@ -37,17 +37,20 @@ export default function Home() {
         <div className="biography-container">
           {/* Title Section with Sparrow */}
           <div className="biography-title-section">
-            <div className="title-header">
-              <h1 className="biography-title">مسعود محمدی</h1>
+            <div className="title-header flex items-center gap-2 md:gap-4 flex-wrap">
+              <h1 className="biography-title text-xl md:text-3xl lg:text-4xl font-bold">
+                مسعود محمدی
+              </h1>
               <img 
                 src="/gonjeshk.png" 
                 alt="گنجشک" 
-                className="sparrow-icon"
+                className="sparrow-icon w-8 h-8 md:w-12 md:h-12 object-contain"
               />
             </div>
             <div className="title-underline"></div>
           </div>
           
+          <div className="biography-border">
           <p className="biography-text">
             کلاسِ بچگیِ مسعود محمدی به جبر روزگار بوی ترکه و ترس می‌داد و در نوجوانی دلش با معلمی ساز نبود. اما قدم که به دانشسرای محمد بهمن‌بیگی گذاشت، ورق زندگی برگشت. مسعود معلم شد، به زادگاهش بازگشت و در کلاس به جای اخم، لبخند نشاند؛ به جای تنبیه، اعتماد و تشویق آورد. در سی سال معلمی افقی تازه پیش چشم شاگردانش گشود تا به کودکان سوق بیاموزد که می‌توانند فراتر از آنچه در اطرافشان می‌بینند، باشند.
             <br /><br />
@@ -57,6 +60,7 @@ export default function Home() {
             <br /><br />
             کتاب یار همیشگی‌اش بود. هرچه مسعود می‌خواند با زبانی ساده و شیرین در حلقه‌های دوستانه بازمی‌گفت؛ از داستان و تاریخ تا جغرافیا و هنر، گفت‌وگو را به جای خطابه می‌نشاند و شنونده را شریک اندیشه می‌کرد. ایران را وجب به وجب پیموده بود؛ روستا و شهر، کویر و جنگل، کوه و دریا را می‌شناخت و از لهجه‌ها، غذاها و آیین‌های هر دیار آگاه بود. با همه این سفرها، ریشه، مسعود محمدی را در خاک زادگاهش نگه داشت. همان‌جا ماند، همان‌جا کاشت و همان‌جا رویاند تا نامش در یاد شاگردان و مردم شهر بماند.
           </p>
+          </div>
         </div>
       </section>
 

@@ -285,5 +285,7 @@
     }
   },
   "nextGalleryId": 26,
-  "nextTestimonialId": 6
+  "nextTestimonialId": 6,
+  "comments": {},
+  "nextCommentId": 2
 }
