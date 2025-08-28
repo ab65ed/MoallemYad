@@ -28,7 +28,7 @@ interface StorageData {
 
 export class FileStorage implements IStorage {
   private dataPath: string;
-  private data: StorageData;
+  private data!: StorageData;
 
   constructor(dataPath: string = process.env.DATA_PATH || "data.json") {
     this.dataPath = path.resolve(dataPath);
@@ -364,10 +364,14 @@ export class FileStorage implements IStorage {
   async createGalleryItem(item: InsertGalleryItem): Promise<GalleryItem> {
     const galleryItem: GalleryItem = {
       ...item,
+      year: item.year ?? null,
+      description: item.description ?? null,
+      poster: item.poster ?? null,
+      duration: item.duration ?? null,
       id: this.data.nextGalleryId++,
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    } as GalleryItem;
     this.data.galleryItems[galleryItem.id] = galleryItem;
     this.saveData();
     return galleryItem;
