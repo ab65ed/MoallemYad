@@ -9,20 +9,37 @@ const getAuthHeaders = () => {
 
 const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '';
 
+async function requestJson(path: string, init?: RequestInit) {
+  const bases = Array.from(new Set([API_BASE, ''].filter(Boolean)));
+  let lastErr: any = null;
+  for (const base of bases) {
+    try {
+      const url = `${base}${path}`;
+      const res = await fetch(url, init);
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!ct.includes('application/json')) {
+        const preview = await res.text().then(t => t.slice(0, 80)).catch(() => '');
+        throw new Error(`Unexpected content-type: ${ct} preview: ${preview}`);
+      }
+      return res.json();
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw (lastErr || new Error('Request failed'));
+}
+
 // API client functions
 const api = {
   // Gallery API
   gallery: {
     getAll: async (): Promise<GalleryItem[]> => {
-      const response = await fetch(`${API_BASE}/api/gallery`);
-      if (!response.ok) throw new Error('Failed to fetch gallery items');
-      return response.json();
+      return requestJson('/api/gallery');
     },
     
     getById: async (id: number): Promise<GalleryItem> => {
-      const response = await fetch(`${API_BASE}/api/gallery/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch gallery item');
-      return response.json();
+      return requestJson(`/api/gallery/${id}`);
     },
     
     create: async (data: InsertGalleryItem): Promise<GalleryItem> => {
@@ -63,15 +80,11 @@ const api = {
   // Testimonials API
   testimonials: {
     getAll: async (): Promise<Testimonial[]> => {
-      const response = await fetch(`${API_BASE}/api/testimonials`);
-      if (!response.ok) throw new Error('Failed to fetch testimonials');
-      return response.json();
+      return requestJson('/api/testimonials');
     },
     
     getById: async (id: number): Promise<Testimonial> => {
-      const response = await fetch(`${API_BASE}/api/testimonials/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch testimonial');
-      return response.json();
+      return requestJson(`/api/testimonials/${id}`);
     },
     
     create: async (data: InsertTestimonial): Promise<Testimonial> => {
@@ -112,18 +125,14 @@ const api = {
   // Stats API
   stats: {
     get: async () => {
-      const response = await fetch(`${API_BASE}/api/stats`);
-      if (!response.ok) throw new Error('Failed to fetch stats');
-      return response.json();
+      return requestJson('/api/stats');
     },
   },
 
   // Comments API
   comments: {
     getForTestimonial: async (testimonialId: number): Promise<Comment[]> => {
-      const response = await fetch(`${API_BASE}/api/testimonials/${testimonialId}/comments`);
-      if (!response.ok) throw new Error('Failed to fetch comments');
-      return response.json();
+      return requestJson(`/api/testimonials/${testimonialId}/comments`);
     },
     submit: async ({ testimonialId, firstName, lastName, content }: { testimonialId: number; firstName: string; lastName: string; content: string; }): Promise<{ id: number; status: string }> => {
       const response = await fetch(`${API_BASE}/api/testimonials/${testimonialId}/comments`, {
