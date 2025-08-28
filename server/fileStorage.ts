@@ -110,7 +110,7 @@ export class FileStorage implements IStorage {
         duration: null
       },
       {
-        src: '/gallery/1000577626_1756036569848.jpg',
+        src: '/gallery/1000577626_1756036107283.jpg',
         title: 'همراه شاگردان در طبیعت',
         category: 'teaching',
         year: '۱۳۶۵',
@@ -120,7 +120,7 @@ export class FileStorage implements IStorage {
         duration: null
       },
       {
-        src: '/gallery/1000577623_1756036569848.jpg',
+        src: '/gallery/1000577623_1756036107282.jpg',
         title: 'پرتره شخصی',
         category: 'personal',
         year: '۱۳۷۰',
