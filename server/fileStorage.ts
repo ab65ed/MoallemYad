@@ -30,7 +30,7 @@ export class FileStorage implements IStorage {
   private dataPath: string;
   private data: StorageData;
 
-  constructor(dataPath: string = "data.json") {
+  constructor(dataPath: string = process.env.DATA_PATH || "data.json") {
     this.dataPath = path.resolve(dataPath);
     this.loadData();
   }
