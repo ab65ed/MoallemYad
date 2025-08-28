@@ -384,7 +384,9 @@ function AdminDashboardContent() {
                       <div className="space-y-1.5 text-sm text-gray-600 mb-4">
                         <div className="flex items-center">
                           <Tag className="w-4 h-4 ml-1" />
-                          {galleryCategories[item.category]}
+                          {(
+                            galleryCategories as Record<string, string>
+                          )[item.category]}
                         </div>
                         {item.year && (
                           <div className="flex items-center">
@@ -483,7 +485,9 @@ function AdminDashboardContent() {
                           </div>
                           <div className="flex items-center">
                             <Tag className="w-4 h-4 ml-1" />
-                            {testimonialCategories[testimonial.category]}
+                            {(
+                              testimonialCategories as Record<string, string>
+                            )[testimonial.category]}
                           </div>
                         </div>
                         <p className="text-gray-600 mb-2">{testimonial.role}</p>

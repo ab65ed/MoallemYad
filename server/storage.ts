@@ -340,10 +340,14 @@ export class MemStorage implements IStorage {
   async createGalleryItem(item: InsertGalleryItem): Promise<GalleryItem> {
     const galleryItem: GalleryItem = {
       ...item,
+      year: item.year ?? null,
+      description: item.description ?? null,
+      poster: item.poster ?? null,
+      duration: item.duration ?? null,
       id: this.nextGalleryId++,
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    } as GalleryItem;
     this.galleryItems.set(galleryItem.id, galleryItem);
     return galleryItem;
   }

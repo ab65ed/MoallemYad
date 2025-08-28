@@ -269,13 +269,13 @@ export default function AdminSettings() {
         {/* Category Management */}
         <CategoryManager
           categories={galleryCategories}
-          onCategoryUpdate={setGalleryCategories}
+          onCategoryUpdate={(cats) => setGalleryCategories(cats as any)}
           type="gallery"
         />
 
         <CategoryManager
           categories={testimonialCategories}
-          onCategoryUpdate={setTestimonialCategories}
+          onCategoryUpdate={(cats) => setTestimonialCategories(cats as any)}
           type="testimonial"
         />
 

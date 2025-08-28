@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GalleryItem, InsertGalleryItem, UpdateGalleryItem, Testimonial, InsertTestimonial, UpdateTestimonial, Comment } from '@shared/schema';
 
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('admin_token');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
+// Helper: build headers with optional auth, always as Record<string,string>
+const withAuth = (base: Record<string, string> = {}): Record<string, string> => {
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('admin_token') : null;
+  return token ? { ...base, Authorization: `Bearer ${token}` } : base;
 };
 
 const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '';
@@ -45,10 +45,7 @@ const api = {
     create: async (data: InsertGalleryItem): Promise<GalleryItem> => {
       const response = await fetch(`${API_BASE}/api/gallery`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...getAuthHeaders()
-        },
+        headers: withAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Failed to create gallery item');
@@ -58,10 +55,7 @@ const api = {
     update: async ({ id, data }: { id: number; data: UpdateGalleryItem }): Promise<GalleryItem> => {
       const response = await fetch(`${API_BASE}/api/gallery/${id}`, {
         method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...getAuthHeaders()
-        },
+        headers: withAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Failed to update gallery item');
@@ -71,7 +65,7 @@ const api = {
     delete: async (id: number): Promise<void> => {
       const response = await fetch(`${API_BASE}/api/gallery/${id}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: withAuth(),
       });
       if (!response.ok) throw new Error('Failed to delete gallery item');
     },
@@ -90,10 +84,7 @@ const api = {
     create: async (data: InsertTestimonial): Promise<Testimonial> => {
       const response = await fetch(`${API_BASE}/api/testimonials`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...getAuthHeaders()
-        },
+        headers: withAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Failed to create testimonial');
@@ -103,10 +94,7 @@ const api = {
     update: async ({ id, data }: { id: number; data: UpdateTestimonial }): Promise<Testimonial> => {
       const response = await fetch(`${API_BASE}/api/testimonials/${id}`, {
         method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...getAuthHeaders()
-        },
+        headers: withAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error('Failed to update testimonial');
@@ -116,7 +104,7 @@ const api = {
     delete: async (id: number): Promise<void> => {
       const response = await fetch(`${API_BASE}/api/testimonials/${id}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: withAuth(),
       });
       if (!response.ok) throw new Error('Failed to delete testimonial');
     },
@@ -148,22 +136,22 @@ const api = {
       return response.json();
     },
     listByStatus: async (status: 'pending' | 'approved' | 'banned'): Promise<Comment[]> => {
-      const response = await fetch(`${API_BASE}/api/comments?status=${status}`, { headers: getAuthHeaders() });
+      const response = await fetch(`${API_BASE}/api/comments?status=${status}`, { headers: withAuth() });
       if (!response.ok) throw new Error('Failed to fetch comments list');
       return response.json();
     },
     approve: async (id: number): Promise<Comment> => {
-      const response = await fetch(`${API_BASE}/api/comments/${id}/approve`, { method: 'PUT', headers: getAuthHeaders() });
+      const response = await fetch(`${API_BASE}/api/comments/${id}/approve`, { method: 'PUT', headers: withAuth() });
       if (!response.ok) throw new Error('Failed to approve comment');
       return response.json();
     },
     ban: async (id: number): Promise<Comment> => {
-      const response = await fetch(`${API_BASE}/api/comments/${id}/ban`, { method: 'PUT', headers: getAuthHeaders() });
+      const response = await fetch(`${API_BASE}/api/comments/${id}/ban`, { method: 'PUT', headers: withAuth() });
       if (!response.ok) throw new Error('Failed to ban comment');
       return response.json();
     },
     remove: async (id: number): Promise<void> => {
-      const response = await fetch(`${API_BASE}/api/comments/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+      const response = await fetch(`${API_BASE}/api/comments/${id}`, { method: 'DELETE', headers: withAuth() });
       if (!response.ok) throw new Error('Failed to delete comment');
     }
   }
