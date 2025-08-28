@@ -26,6 +26,15 @@ import {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Health check endpoint for Coolify and monitoring
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  });
+  
   // Serve static files from gallery directory
   const galleryPath = process.env.NODE_ENV === 'production' 
     ? path.join(process.cwd(), 'dist', 'public', 'gallery')
