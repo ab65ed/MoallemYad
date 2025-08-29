@@ -25,14 +25,6 @@ export default function Footer() {
             data-testid="footer-image-combined"
           />
         </picture>
-        {/* Quick links */}
-        <div className="w-full mt-4 px-6 pb-6 flex flex-col md:flex-row items-center justify-center gap-3 text-white/90 text-sm">
-          <a href="/" className="hover:underline" target="_self" rel="noopener noreferrer">خانه</a>
-          <span className="hidden md:inline">•</span>
-          <a href="/about" className="hover:underline" target="_self" rel="noopener noreferrer">درباره</a>
-          <span className="hidden md:inline">•</span>
-          <a href="/contact" className="hover:underline" target="_self" rel="noopener noreferrer">تماس</a>
-        </div>
       </div>
     </footer>
   );
