@@ -65,9 +65,9 @@ export default function MediaPreview({
             <div className="relative max-w-full max-h-full">
               <button
                 onClick={() => setShowFullscreen(false)}
-                className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200"
+                className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-200 z-10 bg-black/30 hover:bg-black/50 rounded-full p-2"
               >
-                <X className="w-8 h-8" />
+                <X className="w-6 h-6" />
               </button>
               <img
                 src={src}
@@ -150,9 +150,9 @@ export default function MediaPreview({
           <div className="relative max-w-full max-h-full">
             <button
               onClick={() => setShowFullscreen(false)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-200 z-10 bg-black/30 hover:bg-black/50 rounded-full p-2"
             >
-              <X className="w-8 h-8" />
+              <X className="w-6 h-6" />
             </button>
             <video
               src={src}

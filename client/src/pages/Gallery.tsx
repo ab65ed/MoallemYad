@@ -322,9 +322,9 @@ export default function Gallery() {
           <div className="relative max-w-4xl max-h-full w-full">
             <button
               onClick={closeModal}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-200 z-10"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-200 z-10 bg-black/30 hover:bg-black/50 rounded-full p-2"
             >
-              <X className="w-8 h-8" />
+              <X className="w-6 h-6" />
             </button>
             
             <div className="bg-black rounded-lg overflow-hidden shadow-2xl">
