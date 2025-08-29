@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+.root, :root {
   --background: hsl(0, 0%, 87%);
   --foreground: hsl(199, 10%, 35%);
   --card: hsl(0, 0%, 100%);
@@ -37,7 +37,7 @@
   --sidebar-border: hsl(0, 0%, 82%);
   --sidebar-ring: hsl(199, 10%, 69%);
   --font-sans: 'YekanBakh', 'Open Sans', sans-serif;
-  --font-serif: Georgia, serif;
+  --font-serif: 'YekanBakh', 'Open Sans', sans-serif;
   --font-mono: Menlo, monospace;
   --radius: 1.3rem;
   --memorial-blue: hsl(199, 10%, 69%);
@@ -103,6 +103,16 @@
 }
 
 @layer components {
+  /* Utility: Persian justified paragraphs inside content sections */
+  .farsi-justify p {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  /* Utility: force Yekan font for banner headings */
+  .font-yekan {
+    font-family: 'YekanBakh', 'Open Sans', sans-serif !important;
+  }
   .memorial-blue {
     color: var(--memorial-blue);
   }

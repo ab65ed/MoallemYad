@@ -4,13 +4,13 @@ export default function Canvas() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
       {/* Hero Section */}
-      <div className="relative overflow-hidden py-24">
+      <div className="relative overflow-hidden py-16 md:py-24">
         {/* Background Banner (no external image to honor folder-only constraint) */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-pink-800/80"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block p-8 bg-purple-900/90 rounded-2xl backdrop-blur-sm border border-purple-700/50">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 font-serif" data-testid="page-title">
+          <div className="inline-block p-8 bg-purple-900/85 rounded-2xl backdrop-blur-sm border border-purple-700/50 shadow-2xl ring-1 ring-white/10">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 font-yekan" data-testid="page-title">
               بوم رنگ خیال
             </h1>
             <div className="w-32 h-1 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mx-auto mb-6"></div>

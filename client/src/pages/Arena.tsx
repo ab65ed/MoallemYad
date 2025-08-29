@@ -4,7 +4,7 @@ export default function Arena() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       {/* Hero Section */}
-      <div className="relative overflow-hidden py-24">
+      <div className="relative overflow-hidden py-16 md:py-24">
         {/* Background Banner */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -16,8 +16,8 @@ export default function Arena() {
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block p-8 bg-green-900/90 rounded-2xl backdrop-blur-sm border border-green-700/50">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 font-serif" data-testid="page-title">
+          <div className="inline-block p-8 bg-green-900/85 rounded-2xl backdrop-blur-sm border border-green-700/50 shadow-2xl ring-1 ring-white/10">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 font-yekan" data-testid="page-title">
               گوی و میدان
             </h1>
             <div className="w-32 h-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mx-auto mb-6"></div>

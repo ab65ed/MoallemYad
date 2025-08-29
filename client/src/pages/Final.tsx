@@ -41,7 +41,7 @@ export default function Final() {
           
           <div className="prose prose-lg max-w-none text-right leading-relaxed text-gray-700" data-testid="content-area">
             <p className="text-xl mb-8 text-center font-medium">
-              در روز یکشنبه، بیست و هشتم بهمن ماه ۱۴۰۳، در سکوت صبحگاهی که هنوز شهر در خواب بود، مسعود محمدی آرام چشم از جهان فرو بست. مردی که شصت و نه سال عمر پربار داشت، در آغوش خانواده و در سایه دعای دوستداران، به سفر ابدی رفت.
+              در روز  سی و یک تیرماه ۱۴۰۳، در سکوت صبحگاهی که هنوز شهر در خواب بود، مسعود محمدی آرام چشم از جهان فرو بست. مردی که شصت و نه سال عمر پربار داشت، در آغوش خانواده و در سایه دعای دوستداران، به سفر ابدی رفت.
             </p>
             
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-8 rounded-xl border border-amber-200 mb-8">
@@ -217,10 +217,10 @@ export default function Final() {
                 به یاد استاد عزیز، مسعود محمدی
               </p>
               <p className="text-sm text-gray-400">
-                ۶ اسفند ۱۳۳۳ - ۲۸ بهمن ۱۴۰۳
+                ۶ اسفند ۱۳۳۳ - 31 تیرماه ۱۴۰۳
               </p>
               <p className="text-sm text-amber-400 mt-2">
-                «معلم، مربی، هنرمند، انسان»
+                «معلم، مربی، هنرمند، ایران شناس
               </p>
             </div>
           </div>
