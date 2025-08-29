@@ -301,35 +301,8 @@ export class FileStorage implements IStorage {
       this.data.galleryItems[galleryItem.id] = galleryItem;
     });
 
-    // Initialize testimonials
-    const initialTestimonials: Omit<Testimonial, 'id' | 'createdAt' | 'updatedAt'>[] = [
-      {
-        author: "احمد رضایی",
-        role: "شاگرد دوره ابتدایی",
-        date: "بهمن ۱۴۰۲",
-        title: "معلمی که زندگی‌ام را دگرگون کرد",
-        category: "student",
-        content: "استاد مسعود محمدی نه تنها معلم من، بلکه راهنمای زندگی‌ام بود. در آن سال‌های دور که من کودکی خجالتی و کم‌اعتماد به نفس بودم، او بود که دستم را گرفت و به من نشان داد که می‌توانم بال بگشایم."
-      },
-      {
-        author: "فاطمه کریمی",
-        role: "همکار در آموزش و پرورش",
-        date: "آذر ۱۴۰۲",
-        title: "همکاری که درسی از انسانیت بود",
-        category: "colleague",
-        content: "بیست سال در کنار استاد مسعود کار کردم و هر روز چیز تازه‌ای از او آموختم. او نه تنها معلمی استثنایی، بلکه انسانی فوق‌العاده بود که زندگی همه ما را تحت تأثیر قرار داد."
-      }
-    ];
-
-    initialTestimonials.forEach(item => {
-      const testimonial: Testimonial = {
-        ...item,
-        id: this.data.nextTestimonialId++,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      this.data.testimonials[testimonial.id] = testimonial;
-    });
+    // FIXED: No template testimonials initialization
+    // Real testimonials should come from data.json or user submissions only
     // No initial comments
   }
 
