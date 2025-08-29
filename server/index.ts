@@ -1,8 +1,19 @@
 import express, { type Request, Response, NextFunction } from "express";
+import fs from "fs";
+import path from "path";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+function log(message: string, source = "express") {
+  const formattedTime = new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+  console.log(`${formattedTime} [${source}] ${message}`);
+}
 
 // Security headers for production
 if (process.env.NODE_ENV === 'production') {
@@ -82,8 +93,18 @@ app.use((req, res, next) => {
   log(`Environment: NODE_ENV=${process.env.NODE_ENV}, app.env=${app.get("env")}, isProduction=${isProduction}`);
   
   if (isProduction) {
-    serveStatic(app);
+    const distPath = path.resolve(process.cwd(), "dist", "public");
+    if (!fs.existsSync(distPath)) {
+      throw new Error(
+        `Could not find the build directory: ${distPath}, make sure to build the client first`
+      );
+    }
+    app.use(express.static(distPath));
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    });
   } else {
+    const { setupVite } = await import("./vite");
     await setupVite(app, server);
   }
 

@@ -1,0 +1,64 @@
+name: Deploy to VPS (PM2)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH (PM2 rollout)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            set -euo pipefail
+            APP_DIR="${{ secrets.VPS_APP_DIR }}"
+            REPO_URL="https://github.com/ab65ed/MoallemYad.git"
+            BRANCH="main"
+
+            # Ensure deps
+            if command -v apt-get >/dev/null 2>&1; then
+              (command -v sudo >/dev/null 2>&1 && sudo apt-get update -y || apt-get update -y)
+              (command -v sudo >/dev/null 2>&1 && sudo apt-get install -y git curl || apt-get install -y git curl)
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              (command -v sudo >/dev/null 2>&1 && sudo apt-get install -y nodejs || apt-get install -y nodejs)
+            elif command -v yum >/dev/null 2>&1; then
+              (command -v sudo >/dev/null 2>&1 && sudo yum install -y git curl || yum install -y git curl)
+              curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+              (command -v sudo >/dev/null 2>&1 && sudo yum install -y nodejs || yum install -y nodejs)
+            fi
+
+            # Clone or update repo
+            mkdir -p "$APP_DIR"
+            if [ -d "$APP_DIR/.git" ]; then
+              git -C "$APP_DIR" fetch --all --prune
+              git -C "$APP_DIR" reset --hard "origin/$BRANCH"
+            else
+              rm -rf "$APP_DIR" || true
+              git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > .env
+
+            npm ci
+            # Optional build step for client assets
+            # Keep a short delay to let GitHub finish serving artifacts if needed
+            sleep 60
+            npm run build || true
+
+            npm i -g pm2
+            pm2 delete moallemyad || true
+            PORT=80 NODE_ENV=production JWT_SECRET=${{ secrets.JWT_SECRET }} DATA_PATH=$APP_DIR/data.json pm2 start npx --name moallemyad --time -- tsx server/index.ts
+            pm2 save
+            pm2 status || true
+

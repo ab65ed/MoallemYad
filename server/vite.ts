@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
@@ -26,8 +25,19 @@ export async function setupVite(app: Express, server: Server) {
     allowedHosts: true as const,
   };
 
+  // Dynamically import vite config only when running in development.
+  // This avoids resolving TS config in production where we serve static built files.
+  let resolvedConfig: any = {};
+  try {
+    const cfgPath = path.resolve(import.meta.dirname, "..", "vite.config.ts");
+    const cfgModule = await import(cfgPath);
+    resolvedConfig = (cfgModule as any).default ?? cfgModule;
+  } catch (_err) {
+    resolvedConfig = {};
+  }
+
   const vite = await createViteServer({
-    ...viteConfig,
+    ...resolvedConfig,
     configFile: false,
     customLogger: {
       ...viteLogger,
