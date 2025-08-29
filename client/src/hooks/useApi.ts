@@ -10,24 +10,23 @@ const withAuth = (base: Record<string, string> = {}): Record<string, string> => 
 const API_BASE = (import.meta as any)?.env?.VITE_API_BASE || '';
 
 async function requestJson(path: string, init?: RequestInit) {
-  const bases = Array.from(new Set([API_BASE, ''].filter(Boolean)));
-  let lastErr: any = null;
-  for (const base of bases) {
-    try {
-      const url = `${base}${path}`;
-      const res = await fetch(url, init);
-      const ct = (res.headers.get('content-type') || '').toLowerCase();
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      if (!ct.includes('application/json')) {
-        const preview = await res.text().then(t => t.slice(0, 80)).catch(() => '');
-        throw new Error(`Unexpected content-type: ${ct} preview: ${preview}`);
-      }
-      return res.json();
-    } catch (e) {
-      lastErr = e;
-    }
+  try {
+    const url = `${API_BASE}${path}`;
+    const res = await fetch(url, {
+      // Force network response (avoid 304 / cached-without-body issues)
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        ...(init?.headers || {}),
+      },
+      ...init,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch (e) {
+    console.error('API request failed:', path, e);
+    throw e;
   }
-  throw (lastErr || new Error('Request failed'));
 }
 
 // API client functions

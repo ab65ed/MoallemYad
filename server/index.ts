@@ -27,6 +27,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Avoid 304 for API responses to ensure React Query receives JSON bodies
+app.set('etag', false);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 // CORS for cross-origin API calls from custom domain to vercel.app (temporary)
@@ -36,6 +39,16 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
+  }
+  next();
+});
+
+// Explicitly disable caching for API endpoints to avoid 304 responses
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
   }
   next();
 });
